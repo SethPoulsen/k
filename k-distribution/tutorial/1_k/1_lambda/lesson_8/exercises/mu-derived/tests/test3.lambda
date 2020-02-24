@@ -1,0 +1,4 @@
+(
+(lambda n . letrec timesN x = if x <= 1 then n else (n + (timesN (x + -1)))
+        in (timesN 100))
+5)
