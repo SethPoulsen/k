@@ -1,0 +1,3 @@
+
+letrec sumTo x = if x <= 1 then false else (x + (f (x + -1)))
+in (sumTo 3)
