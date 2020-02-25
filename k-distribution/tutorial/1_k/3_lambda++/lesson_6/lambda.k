@@ -173,6 +173,6 @@ supposed to be executed.  Forget the environment and you get a wrong
 
   syntax Val ::= cc(Map,K)
     [latex(\textsf{closure}_{\texttt{callcc}}({#1},{#2}))]
-  rule <k> (callcc V:Val => V cc(Rho,K)) ~> K </k> <env> Rho </env>
+  rule <k> callcc V:Val ~> K => V cc(Rho,K) ~> K </k> <env> Rho </env>
   rule <k> cc(Rho,K) V:Val ~> _ =>  V ~> K </k> <env> _ => Rho </env>
 endmodule

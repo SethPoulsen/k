@@ -50,6 +50,8 @@ We move all the LAMBDA++ syntax here. */
                | "letrec" Id Id "=" Exp "in" Exp             // Letrec
                | "mu" Id "." Exp      [latex(\mu{#1}.{#2})]  // Mu
                | "callcc" Exp  [strict]                      // Callcc
+               | "callCC" Exp  [strict]                      // CallCC
+
 
 /*@ One thing you may want to do, now that the entire syntax is in one
 place, is to play with precedences.  This way, you can make kompile
@@ -175,4 +177,8 @@ supposed to be executed.  Forget the environment and you get a wrong
     [latex(\textsf{closure}_{\texttt{callcc}}({#1},{#2}))]
   rule <k> (callcc V:Val => V cc(Rho,K)) ~> K </k> <env> Rho </env>
   rule <k> cc(Rho,K) V:Val ~> _ =>  V ~> K </k> <env> _ => Rho </env>
+
+  syntax Val ::= CC(Map,K)
+  rule <k> callCC V:Val ~> K => V CC(Rho,K) </k> <env> Rho </env>
+  rule <k> CC(Rho,K) V:Val ~> _ =>  V ~> K </k> <env> _ => Rho </env>
 endmodule

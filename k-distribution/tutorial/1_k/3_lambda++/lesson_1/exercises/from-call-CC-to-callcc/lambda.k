@@ -38,10 +38,15 @@ module LAMBDA-SEMANTICS
   rule letrec F:KVar X = E in E' => let F = mu F . lambda X . E in E'    [macro]
   rule mu X . E => E[(mu X . E) / X]
 
+  syntax Exp ::= "callCC" Exp  [strict]
+  syntax Val ::= CC(K)
+  rule <k> callCC V:Val ~> K => V CC(K) </k>
+  rule <k> CC(K) V ~> _ =>  V ~> K </k>
+
   syntax Exp ::= "callcc" Exp  [strict]
-  syntax Val ::= cc(K)
-  rule <k> (callcc V:Val => V cc(K)) ~> K </k>
-  rule <k> cc(K) V ~> _ =>  V ~> K </k>
+  syntax KVar ::= "$x" [token] 
+  rule <k> callcc V:Val ~> K => callCC V </k>
+
 endmodule
 
 module LAMBDA

@@ -1,7 +1,7 @@
 let x = 1 in
 let x = 2 in
 
-((callCC 
+((callcc
 
   (lambda k .
     let x = 3 in

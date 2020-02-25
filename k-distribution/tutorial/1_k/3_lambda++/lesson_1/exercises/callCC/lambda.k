@@ -42,6 +42,12 @@ module LAMBDA-SEMANTICS
   syntax Val ::= cc(K)
   rule <k> (callcc V:Val => V cc(K)) ~> K </k>
   rule <k> cc(K) V ~> _ =>  V ~> K </k>
+
+  syntax Exp ::= "callCC" Exp  [strict]
+  syntax Val ::= CC(K)
+  rule <k> callCC V:Val ~> K => V CC(K) </k>
+  rule <k> CC(K) V ~> _ =>  V ~> K </k>
+
 endmodule
 
 module LAMBDA
