@@ -177,9 +177,11 @@ supposed to be executed.  Forget the environment and you get a wrong
     [latex(\textsf{closure}_{\texttt{callcc}}({#1},{#2}))]
   rule <k> callcc V:Val ~> K => V cc(Rho,K) ~> K </k> <env> Rho </env>
   rule <k> cc(Rho,K) V:Val ~> _ =>  V ~> K </k> <env> _ => Rho </env>
-
-  syntax Val ::= CC(Map,K)
-  rule <k> callCC V:Val ~> K => V CC(Rho,K) </k> <env> Rho </env>
-  rule <k> CC(Rho,K) V:Val ~> _ =>  V ~> K </k> <env> _ => Rho </env>
+  
+  syntax Exp ::= "halt" Exp    [strict]
+  rule <k> halt V:Val ~> _ => V </k>
+  
+  syntax Id ::= "$x" [token] 
+  rule <k> callCC V:Val ~> K => callcc (lambda $x . (halt (V $x))) ~> K </k>
   
 endmodule

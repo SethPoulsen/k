@@ -36,7 +36,6 @@ module LAMBDA
                | "mu" KVar "." Exp      [binder, latex(\mu{#1}.{#2})]
                
   rule letrec F:KVar X = E in E' => let F = mu F . lambda X . E in E'    [macro]
-  // rule mu X . E => E[(mu X . E) / X]
 
   syntax KVar ::= "$x" [token] | "$y" [token]
   rule mu F . lambda X . E => 

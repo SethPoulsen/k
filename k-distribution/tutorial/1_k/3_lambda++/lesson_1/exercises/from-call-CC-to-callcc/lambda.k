@@ -44,8 +44,11 @@ module LAMBDA-SEMANTICS
   rule <k> CC(K) V ~> _ =>  V ~> K </k>
 
   syntax Exp ::= "callcc" Exp  [strict]
-  syntax KVar ::= "$x" [token] 
-  rule <k> callcc V:Val ~> K => callCC V </k>
+  syntax KVar ::= "$x"   [token] 
+  // rule <k> callcc V:Val ~> K => callCC (lambda $x . (V $x)) ~> K </k>
+  // rule <k> callcc V:Val ~> K => callCC (lambda $x . (V $x)) ~> K </k>
+  rule <k> callcc V:Val ~> K => callCC (lambda $x . (V $x)) </k>
+  rule <k> $x V:Val ~> K => V:Val ~> K </k>
 
 endmodule
 
