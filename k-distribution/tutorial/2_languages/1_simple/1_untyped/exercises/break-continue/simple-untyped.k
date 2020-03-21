@@ -412,7 +412,7 @@ proceed (otherwise the rewriting process gets stuck). */
   rule if ( true) S else _ => S
   rule if (false) _ else S => S
 
-/*@ \subsection{While loop}
+/*@ \subsection{For loop}
 The simplest way to give the semantics of the while loop is by unrolling.
 Note, however, that its unrolling is only allowed when the while loop reaches
 the top of the computation (to avoid non-termination of unrolling).  We prefer
@@ -426,7 +426,37 @@ semantics, which would also involve the \textsf{control} cell. */
 
   // rule while (E) S => if (E) {S while(E)S}  [structural]
 
-  rule for(Start Cond; Step) S => {Start if (Cond) {S Step; for (1; Cond; Step) S } }  [structural]
+  syntax KItem ::= (Stmts, K, K, Map)
+
+  syntax KItem ::= "popl"
+  rule <k> popl => . ...</k>
+      <lstack> ListItem(_) => .List ...</lstack>
+
+  syntax Expr ::= "$loophelper"
+
+  rule <k> for(Start Cond; Step) S ~> K => {Start if (Cond) {S Step; for ("$loophelper"; Cond; Step) S } } ~> popl ~> K </k> 
+      <control>
+        <lstack> .List => ListItem((S, K, Step; for ("$loophelper"; Cond; Step) S ~> popl ~> K, Env)) ...</lstack>
+        C
+       </control>
+       <env> Env </env> [structural]
+
+  rule for ("$loophelper"; Cond; Step) S => if (Cond) {S Step; for ("$loophelper"; Cond; Step) S } [structural]
+
+  rule <k> break; ~> _ => K </k>
+      <lstack> ListItem((S, K, J, Env)) => .List ...</lstack>
+      <env> _ => Env </env>
+
+  // rule <k> continue; ~> _ => J </k>
+  //     <control> 
+  //       <lstack> ListItem((S, K, J, Env)) </lstack>
+  //       C
+  //     </control>
+  //     <env> E </env>
+
+  rule <k> continue; ~> _ => J </k>
+      <lstack> ListItem((S, K, J, Env)) </lstack>
+      <env> _ => Env </env>
 
   // rule for(Start Cond; Step) {S} => {Start while (Cond) {S Step;}}  [macro]
   // rule for(Start Cond; Step) {} => {Start if (Cond) {Step for ( Cond; Step) {} }}  [structural]
