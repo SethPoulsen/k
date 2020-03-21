@@ -294,7 +294,7 @@ are short-circuited: */
 
   rule <k> lambda(Xs,S)(Vs:Vals) ~> K => mkDecls(Xs,Vs) S return; </k>
        <control>
-         <fstack> .List => ListItem((Env,K,C)) ...</fstack>
+         <fstack> .List => ListItem((Env:Map,K:K,C:ControlCellFragment)) ...</fstack>
          C
        </control>
        <env> Env => GEnv </env>
@@ -302,7 +302,7 @@ are short-circuited: */
 
   rule <k> return(V:Val); ~> _ => V ~> K </k>
        <control>
-         <fstack> ListItem((Env,K,C)) => .List ...</fstack>
+         <fstack> ListItem((Env:Map,K:K,C:ControlCellFragment)) => .List ...</fstack>
          (_ => C)
        </control>
        <env> _ => Env </env>
@@ -426,25 +426,25 @@ semantics, which would also involve the \textsf{control} cell. */
 
   // rule while (E) S => if (E) {S while(E)S}  [structural]
 
-  syntax KItem ::= (Stmts, K, K, Map)
+  syntax KItem ::= (K, Map, K)
 
   syntax KItem ::= "popl"
   rule <k> popl => . ...</k>
-      <lstack> ListItem(_) => .List ...</lstack>
+      <lstack> ListItem(_) => .List ... </lstack>
 
   syntax Expr ::= "$loophelper"
+  rule for ("$loophelper"; Cond; Step) S => if (Cond) {S Step; for ("$loophelper"; Cond; Step) S } [structural]
 
   rule <k> for(Start Cond; Step) S ~> K => {Start if (Cond) {S Step; for ("$loophelper"; Cond; Step) S } } ~> popl ~> K </k> 
       <control>
-        <lstack> .List => ListItem((S, K, Step; for ("$loophelper"; Cond; Step) S ~> popl ~> K, Env)) ...</lstack>
+        <lstack> .List => ListItem((K, Env, Step; for ("$loophelper"; Cond; Step) S ~> popl ~> K)) ...</lstack>
         C
        </control>
        <env> Env </env> [structural]
 
-  rule for ("$loophelper"; Cond; Step) S => if (Cond) {S Step; for ("$loophelper"; Cond; Step) S } [structural]
 
   rule <k> break; ~> _ => K </k>
-      <lstack> ListItem((S, K, J, Env)) => .List ...</lstack>
+      <lstack> ListItem((K, Env, J)) => .List ...</lstack>
       <env> _ => Env </env>
 
   // rule <k> continue; ~> _ => J </k>
@@ -455,8 +455,8 @@ semantics, which would also involve the \textsf{control} cell. */
   //     <env> E </env>
 
   rule <k> continue; ~> _ => J </k>
-      <lstack> ListItem((S, K, J, Env)) </lstack>
-      <env> _ => Env </env>
+      <lstack> ListItem((K:K, Env:Map, J:K)) </lstack>
+      // <env> _ => Env </env>
 
   // rule for(Start Cond; Step) {S} => {Start while (Cond) {S Step;}}  [macro]
   // rule for(Start Cond; Step) {} => {Start if (Cond) {Step for ( Cond; Step) {} }}  [structural]
