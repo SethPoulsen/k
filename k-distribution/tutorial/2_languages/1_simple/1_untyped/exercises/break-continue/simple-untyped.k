@@ -432,12 +432,12 @@ semantics, which would also involve the \textsf{control} cell. */
   rule <k> popl => . ...</k>
       <lstack> ListItem(_) => .List ... </lstack>
 
-  syntax Expr ::= "$loophelper"
-  rule for ("$loophelper"; Cond; Step) S => if (Cond) {S Step; for ("$loophelper"; Cond; Step) S } [structural]
-
-  rule <k> for(Start Cond; Step) S ~> K => {Start if (Cond) {S Step; for ("$loophelper"; Cond; Step) S } } ~> popl ~> K </k> 
+  syntax Exp ::= "$loophelper"
+  rule for ($loophelper; Cond; Step) S => if (Cond) {S Step; for ($loophelper; Cond; Step) S } [structural]
+  rule $loophelper => "loophelper"
+  rule <k> for(Start Cond; Step) S ~> K => {Start if (Cond) {S Step; for ($loophelper; Cond; Step) S } } ~> popl ~> K </k> 
       <control>
-        <lstack> .List => ListItem((K, Env, Step; for ("$loophelper"; Cond; Step) S ~> popl ~> K)) ...</lstack>
+        <lstack> .List => ListItem((K, Env, Step; for ($loophelper; Cond; Step) S ~> popl ~> K)) ...</lstack>
         C
        </control>
        <env> Env </env> [structural]
@@ -447,16 +447,13 @@ semantics, which would also involve the \textsf{control} cell. */
       <lstack> ListItem((K, Env, J)) => .List ...</lstack>
       <env> _ => Env </env>
 
-  // rule <k> continue; ~> _ => J </k>
-  //     <control> 
-  //       <lstack> ListItem((S, K, J, Env)) </lstack>
-  //       C
-  //     </control>
-  //     <env> E </env>
-
   rule <k> continue; ~> _ => J </k>
-      <lstack> ListItem((K:K, Env:Map, J:K)) </lstack>
+      <lstack> ListItem((K:K, Env:Map, J:K)) => ListItem((K:K, Env:Map, J:K)) ...  </lstack>
       // <env> _ => Env </env>
+
+  // syntax Expr ::= "$WAT"
+  // rule <k> continue; ~> _ => $WAT </k>
+  //     <lstack> .List </lstack>
 
   // rule for(Start Cond; Step) {S} => {Start while (Cond) {S Step;}}  [macro]
   // rule for(Start Cond; Step) {} => {Start if (Cond) {Step for ( Cond; Step) {} }}  [structural]
