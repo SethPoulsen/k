@@ -432,12 +432,13 @@ semantics, which would also involve the \textsf{control} cell. */
   rule <k> popl => . ...</k>
       <lstack> ListItem(_) => .List ... </lstack>
 
-  syntax Exp ::= "$loophelper"
-  rule for ($loophelper; Cond; Step) S => if (Cond) {S Step; for ($loophelper; Cond; Step) S } [structural]
-  rule $loophelper => "loophelper"
-  rule <k> for(Start Cond; Step) S ~> K => {Start if (Cond) {S Step; for ($loophelper; Cond; Step) S } } ~> popl ~> K </k> 
+  // syntax Exp ::= "$loophelper"
+
+  rule for ("$loophelper"; Cond; Step) S => if (Cond) {S Step; for ("$loophelper"; Cond; Step) S } [structural]
+  // rule $loophelper => "loophelper"
+  rule <k> for(Start Cond; Step) S ~> K => {Start if (Cond) {S Step; for ("$loophelper"; Cond; Step) S } } ~> popl ~> K </k> 
       <control>
-        <lstack> .List => ListItem((K, Env, Step; for ($loophelper; Cond; Step) S ~> popl ~> K)) ...</lstack>
+        <lstack> .List => ListItem((K, Env, Step; for ("$loophelper"; Cond; Step) S ~> popl ~> K)) ...</lstack>
         C
        </control>
        <env> Env </env> [structural]
