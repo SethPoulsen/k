@@ -398,7 +398,7 @@ We only allow printing integers and strings: */
 
 Exception parameters are now typed, but note that the semantics below
 works correctly only when the thrown exception has the same type as
-the innermost try-catch paramete.  To keep things simple, for the time
+the innermost try-catch parameter.  To keep things simple, for the time
 being we can assume that SIMPLE only throws and catches integer
 values, in which case our semantics below works fine: */
 
@@ -421,7 +421,14 @@ values, in which case our semantics below works fine: */
          <xstack> ListItem((T:Type X:Id, S2, K, Env, C)) => .List ...</xstack>
          (_ => C)
        </control>
-       <env> _ => Env </env>
+       <env> _ => Env </env> when typeOf(V) ==K T
+
+  rule <k> throw V:Val; ~> _ => throw V:Val; </k>
+      <control>
+        <xstack> ListItem((T:Type X:Id, S2, K, Env, C)) => .List ...</xstack>
+        (_ => C)
+      </control>
+      <env> _ => Env </env> when typeOf(V) =/=K T 
 
 //@ \subsubsection{Threads}
 
