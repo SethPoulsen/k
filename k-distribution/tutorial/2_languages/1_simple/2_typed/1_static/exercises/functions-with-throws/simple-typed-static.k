@@ -394,13 +394,11 @@ entire code of the function body needs to type anyway. */
              </task>)
     [structural]
 
-  rule <task> <k> T:Type F:Id(Ps:Params) throws Ts:Types S => getTypes(Ps)->T F; ...</k> </task>
+  rule <task> <k> T:Type F:Id(Ps:Params) throws Ts:Types S => getTypes(Ps)->T throws Ts F; ...</k> </task>
        (.Bag => <task>
                <k> mkDecls(Ps) S </k> 
                <tenv> .Map </tenv> 
                <returnType> T </returnType> 
-              //  <throwsTypes> ?List2Set(Ts) </throwsTypes> 
-              //  <throwsTypes> .Set </throwsTypes> 
                <throwsTypes> typesToSet(Ts) </throwsTypes>
              </task>)
     [structural]
@@ -542,7 +540,8 @@ Function application requires the type of the function and the
 types of the passed values to be compatible.  Note that a special case
 is needed to handle the no-argument case: */
 
-  rule (Ts:Types -> T throws Ts2) => (Ts:Types -> T)
+  rule <k> (Ts:Types -> T throws Ts2)(Ts) => T...</k> 
+    <throwsTypes> TT </throwsTypes> requires Ts =/=K .Types andBool typesToSet(Ts2) <=Set TT
   rule (Ts:Types -> T)(Ts) => T requires Ts =/=K .Types
   rule (void -> T)(.Types) => T
 
@@ -593,10 +592,8 @@ exceptions). */
     (.Bag => <task> <k> B </k> <tenv> Rho </tenv> 
       <throwsTypes> TT SetItem(T) </throwsTypes> </task> )    
 
-  // rule <k> throw T; => stmt </k> <throwsTypes>...SetItem(T)...</throwsTypes> 
-  rule <k> throw T; => stmt </k> <throwsTypes> TT </throwsTypes> requires T in TT 
-
-  // rule <k> throw T; => stmt </k> <throwsTypes> ThrowsTypes </throwsTypes> requires T in ThrowsTypes
+  // rule <k> throw T; => stmt...</k> <throwsTypes>...SetItem(T)...</throwsTypes> 
+  rule <k> throw T; => stmt...</k> <throwsTypes> TT </throwsTypes> requires T in TT 
 
 /*@ \subsection{Concurrency}
 Nothing special about typing the concurrency constructs, except that
@@ -645,10 +642,5 @@ list of variable declarations. */
   rule getTypes(T:Type _:Id) => T, .Types   // I would like to not use .Types
   rule getTypes(T:Type _:Id, P, Ps) => T, getTypes(P,Ps)
   rule getTypes(.Params) => void, .Types
-
-  // syntax Set ::= toSet(Types) [function]
-  // rule getTypes(T:Type) => SetItem(T) .Set   // I would like to not use .Types
-  // rule getTypes(T:Type, Ts) => SetItem(T) toSet(Ts)
-  // rule getTypes(.Types) => .Set
 
 endmodule
