@@ -400,9 +400,16 @@ entire code of the function body needs to type anyway. */
                <tenv> .Map </tenv> 
                <returnType> T </returnType> 
               //  <throwsTypes> ?List2Set(Ts) </throwsTypes> 
-               <throwsTypes> .Set </throwsTypes> 
+              //  <throwsTypes> .Set </throwsTypes> 
+               <throwsTypes> typesToSet(Ts) </throwsTypes>
              </task>)
     [structural]
+
+  syntax Set ::= typesToSet(Types)   [function]
+  rule typesToSet(T:Type) => SetItem(T) .Set   
+  rule typesToSet(T:Type, Ts) => SetItem(T) typesToSet(Ts)
+  rule typesToSet(.Types) => .Set
+
 /*@ \subsection{Checking if \texttt{main()} exists}
 
 Once the entire program is processed (generating appropriate tasks
