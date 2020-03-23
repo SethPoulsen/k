@@ -119,6 +119,7 @@ The lists of types are useful for function arguments. */
   syntax Type ::= "void" | "int" | "bool" | "string"
                 | Type "[" "]"
                 > Types "->" Type
+                | Types "->" Type "throws" Types
                 | "(" Type ")"             [bracket]
 
   syntax Types ::= List{Type,","}
@@ -136,6 +137,8 @@ type, we also introduce a new syntactic category for typed variables,
 
   syntax Decl ::= Type Exps ";"
                 | Type Id "(" Params ")" Block
+                | Type Id "(" Params ")" "throws" Types Block
+
 
 /*@ \subsection{Expressions}
 
@@ -211,7 +214,7 @@ type the actual construct. */
                 | "return" Exp ";"                         [strict]
                 | "return" ";"
                 | "print" "(" Exps ")" ";"                 [strict]
-                | "try" Block "catch" "(" Param ")" Block  [strict(1)]
+                | "try" Block "catch" "(" Param ")" Block  //[strict(1)]
                 | "throw" Exp ";"                          [strict]
                 | "join" Exp ";"                           [strict]
                 | "acquire" Exp ";"                        [strict]
@@ -322,6 +325,7 @@ subcells. */
                       <k color="green"> $PGM:Stmts </k>
                       <tenv multiplicity="?" color="cyan"> .Map </tenv>
                       <returnType multiplicity="?" color="black"> void </returnType>
+                      <throwsTypes multiplicity="?" color="red"> .Set </throwsTypes>
                     </task>
                   </tasks>
 //                  <br/>
@@ -383,10 +387,22 @@ entire code of the function body needs to type anyway. */
 
   rule <task> <k> T:Type F:Id(Ps:Params) S => getTypes(Ps)->T F; ...</k> </task>
        (.Bag => <task>
-               <k> mkDecls(Ps) S </k> <tenv> .Map </tenv> <returnType> T </returnType>
+               <k> mkDecls(Ps) S </k> 
+               <tenv> .Map </tenv> 
+               <returnType> T </returnType>
+               <throwsTypes> .Set </throwsTypes>
              </task>)
     [structural]
 
+  rule <task> <k> T:Type F:Id(Ps:Params) throws Ts:Types S => getTypes(Ps)->T F; ...</k> </task>
+       (.Bag => <task>
+               <k> mkDecls(Ps) S </k> 
+               <tenv> .Map </tenv> 
+               <returnType> T </returnType> 
+              //  <throwsTypes> ?List2Set(Ts) </throwsTypes> 
+               <throwsTypes> .Set </throwsTypes> 
+             </task>)
+    [structural]
 /*@ \subsection{Checking if \texttt{main()} exists}
 
 Once the entire program is processed (generating appropriate tasks
@@ -519,6 +535,7 @@ Function application requires the type of the function and the
 types of the passed values to be compatible.  Note that a special case
 is needed to handle the no-argument case: */
 
+  rule (Ts:Types -> T throws Ts2) => (Ts:Types -> T)
   rule (Ts:Types -> T)(Ts) => T requires Ts =/=K .Types
   rule (void -> T)(.Types) => T
 
@@ -543,8 +560,8 @@ exceptions can only have integer type. */
 
   rule {} => block
 
-  rule <task> <k> {S} => block ...</k> <tenv> Rho </tenv> R </task>
-       (.Bag => <task> <k> S </k> <tenv> Rho </tenv> R </task>)
+  rule <task> <k> {S} => block ...</k> <tenv> Rho </tenv> <throwsTypes> TT </throwsTypes> R </task>
+       (.Bag => <task> <k> S </k> <tenv> Rho </tenv> <throwsTypes> TT </throwsTypes> R </task>)
 
 //@ \subsection{Expression statement}
 
@@ -563,8 +580,16 @@ any try-catch block (with the currently unchecked---also for
 simplicity---expectation that the caller functions would catch those
 exceptions). */
 
-  rule try block catch(int X:Id) {S} => {int X; S}  [structural]
-  rule throw int; => stmt
+  // rule try block catch(T X:Id) {S} => {T X; S}  [structural]
+  // rule try block catch(int X:Id) {S} => {int X; S}  [structural]
+  rule <k> try B:Block catch(T X:Id) {S} => {T X; S}...</k> <tenv> Rho </tenv> <throwsTypes> TT </throwsTypes>   
+    (.Bag => <task> <k> B </k> <tenv> Rho </tenv> 
+      <throwsTypes> TT SetItem(T) </throwsTypes> </task> )    
+
+  // rule <k> throw T; => stmt </k> <throwsTypes>...SetItem(T)...</throwsTypes> 
+  rule <k> throw T; => stmt </k> <throwsTypes> TT </throwsTypes> requires T in TT 
+
+  // rule <k> throw T; => stmt </k> <throwsTypes> ThrowsTypes </throwsTypes> requires T in ThrowsTypes
 
 /*@ \subsection{Concurrency}
 Nothing special about typing the concurrency constructs, except that
@@ -613,5 +638,10 @@ list of variable declarations. */
   rule getTypes(T:Type _:Id) => T, .Types   // I would like to not use .Types
   rule getTypes(T:Type _:Id, P, Ps) => T, getTypes(P,Ps)
   rule getTypes(.Params) => void, .Types
+
+  // syntax Set ::= toSet(Types) [function]
+  // rule getTypes(T:Type) => SetItem(T) .Set   // I would like to not use .Types
+  // rule getTypes(T:Type, Ts) => SetItem(T) toSet(Ts)
+  // rule getTypes(.Types) => .Set
 
 endmodule
