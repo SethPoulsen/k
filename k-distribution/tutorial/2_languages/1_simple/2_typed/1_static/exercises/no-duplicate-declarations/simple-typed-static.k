@@ -321,6 +321,7 @@ subcells. */
                     <task multiplicity="*" color="yellow">
                       <k color="green"> $PGM:Stmts </k>
                       <tenv multiplicity="?" color="cyan"> .Map </tenv>
+                      <ptenv multiplicity="?" color="red"> .Map </ptenv>
                       <returnType multiplicity="?" color="black"> void </returnType>
                     </task>
                   </tasks>
@@ -350,7 +351,8 @@ variable. */
   rule <task> <k> T:Type X:Id; => stmt ...</k> </task>
        <gtenv> Rho (.Map => X |-> T) </gtenv>
     requires notBool(X in keys(Rho))
-  rule <k> T:Type X:Id; => stmt ...</k> <tenv> Rho => Rho[X <- T] </tenv>
+  rule <k> T:Type X:Id; => stmt ...</k> <tenv> Rho => Rho[X <- T] </tenv> 
+     requires notBool(X in keys(Rho))
 
   context _:Type _::Exp[HOLE::Exps];
 // The rule below may need to sort E to Exp in the future, if the
@@ -383,7 +385,7 @@ entire code of the function body needs to type anyway. */
 
   rule <task> <k> T:Type F:Id(Ps:Params) S => getTypes(Ps)->T F; ...</k> </task>
        (.Bag => <task>
-               <k> mkDecls(Ps) S </k> <tenv> .Map </tenv> <returnType> T </returnType>
+               <k> mkDecls(Ps) S </k> <tenv> .Map </tenv> <ptenv> .Map </ptenv> <returnType> T </returnType>
              </task>)
     [structural]
 
@@ -397,7 +399,7 @@ generate a function task executing \texttt{main()} to ensure that it
 types (remove this task creation if you do not want your type system
 to reject programs without a \texttt{main} function). */
 
-  rule <task> <k> stmt => main(.Exps); </k> (.Bag => <tenv> .Map </tenv>) </task>
+  rule <task> <k> stmt => main(.Exps); </k> (.Bag => <tenv> .Map </tenv> <ptenv> .Map </ptenv>) </task>
     [structural]
 
 /*@ \subsection{Collecting the terminated tasks}
@@ -435,8 +437,11 @@ environment, too. */
 
   rule <k> X:Id => T ...</k> <tenv>... X |-> T ...</tenv>
 
-  rule <k> X:Id => T ...</k> <tenv> Rho </tenv> <gtenv>... X |-> T ...</gtenv>
+  rule <k> X:Id => T ...</k> <tenv> Rho </tenv> <ptenv>... X |-> T ...</ptenv>
     requires notBool(X in keys(Rho))
+  
+  rule <k> X:Id => T ...</k> <tenv> Rho </tenv> <ptenv> PRho </ptenv> <gtenv>... X |-> T ...</gtenv>
+    requires notBool(X in keys(Rho)) andBool notBool(X in keys(PRho))
 
   rule <task> <k> X:Id => T ...</k> </task> <gtenv>... X |-> T ...</gtenv>
 
@@ -543,8 +548,8 @@ exceptions can only have integer type. */
 
   rule {} => block
 
-  rule <task> <k> {S} => block ...</k> <tenv> Rho </tenv> R </task>
-       (.Bag => <task> <k> S </k> <tenv> Rho </tenv> R </task>)
+  rule <task> <k> {S} => block ...</k> <tenv> Rho </tenv> <ptenv> PRho </ptenv> R </task>
+       (.Bag => <task> <k> S </k> <tenv> .Map </tenv> <ptenv> updateMap(PRho, Rho) </ptenv> R </task>)
 
 //@ \subsection{Expression statement}
 
