@@ -385,7 +385,7 @@ entire code of the function body needs to type anyway. */
 
   rule <task> <k> T:Type F:Id(Ps:Params) S => getTypes(Ps)->T F; ...</k> </task>
        (.Bag => <task>
-               <k> mkDecls(Ps) S </k> <tenv> .Map </tenv> <ptenv> .Map </ptenv> <returnType> T </returnType>
+               <k> {mkDecls(Ps)} S </k> <tenv> .Map </tenv> <ptenv> .Map </ptenv> <returnType> T </returnType>
              </task>)
     [structural]
 
@@ -568,7 +568,7 @@ any try-catch block (with the currently unchecked---also for
 simplicity---expectation that the caller functions would catch those
 exceptions). */
 
-  rule try block catch(int X:Id) {S} => {int X; S}  [structural]
+  rule try block catch(int X:Id) {S} => {int X; {S}}  [structural]
   rule throw int; => stmt
 
 /*@ \subsection{Concurrency}
