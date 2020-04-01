@@ -385,7 +385,7 @@ entire code of the function body needs to type anyway. */
 
   rule <task> <k> T:Type F:Id(Ps:Params) S => getTypes(Ps)->T F; ...</k> </task>
        (.Bag => <task>
-               <k> {mkDecls(Ps)} S </k> <tenv> .Map </tenv> <ptenv> .Map </ptenv> <returnType> T </returnType>
+               <k> { mkDecls(Ps) {S} } </k> <tenv> .Map </tenv> <ptenv> .Map </ptenv> <returnType> T </returnType>
              </task>)
     [structural]
 
@@ -551,6 +551,7 @@ exceptions can only have integer type. */
   rule <task> <k> {S} => block ...</k> <tenv> Rho </tenv> <ptenv> PRho </ptenv> R </task>
        (.Bag => <task> <k> S </k> <tenv> .Map </tenv> <ptenv> updateMap(PRho, Rho) </ptenv> R </task>)
 
+
 //@ \subsection{Expression statement}
 
   rule _:Type; => stmt
@@ -578,8 +579,8 @@ we do not want the spawned thread to return, so we do not include any
 Same like with the functions above, we do not check for thrown
 exceptions which are not caught. */
 
-  rule <k> spawn S => int ...</k> <tenv> Rho </tenv>
-       (.Bag => <task> <k> S </k> <tenv> Rho </tenv> </task>)
+  rule <k> spawn S => int ...</k> <tenv> Rho </tenv> <ptenv> PRho </ptenv>
+       (.Bag => <task> <k> S </k> <tenv> Rho </tenv> <ptenv> PRho </ptenv> </task>)
   rule join int; => stmt
   rule acquire _:Type; => stmt
   rule release _:Type; => stmt

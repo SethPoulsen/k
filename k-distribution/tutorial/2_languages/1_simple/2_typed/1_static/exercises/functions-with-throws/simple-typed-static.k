@@ -566,8 +566,8 @@ exceptions can only have integer type. */
 
   rule {} => block
 
-  rule <task> <k> {S} => block ...</k> <tenv> Rho </tenv> <throwsTypes> TT </throwsTypes> R </task>
-       (.Bag => <task> <k> S </k> <tenv> Rho </tenv> <throwsTypes> TT </throwsTypes> R </task>)
+  rule <task> <k> {S} => block ...</k> <tenv> Rho </tenv> R </task>
+       (.Bag => <task> <k> S </k> <tenv> Rho </tenv> R </task>)
 
 //@ \subsection{Expression statement}
 
@@ -603,7 +603,8 @@ Same like with the functions above, we do not check for thrown
 exceptions which are not caught. */
 
   rule <k> spawn S => int ...</k> <tenv> Rho </tenv>
-       (.Bag => <task> <k> S </k> <tenv> Rho </tenv> </task>)
+       (.Bag => <task> <k> S </k> <tenv> Rho </tenv> <throwsTypes> .Set </throwsTypes>
+</task>)
   rule join int; => stmt
   rule acquire _:Type; => stmt
   rule release _:Type; => stmt

@@ -290,11 +290,12 @@ are short-circuited: */
 
 /*@ \subsection{Function call} */
 
-  syntax KItem ::=  (Map,K,ControlCellFragment)
+  syntax KItem ::=  (Map,K,ControlCellFragment, List)
 
   rule <k> lambda(Xs,S)(Vs:Vals) ~> K => mkDecls(Xs,Vs) S return; </k>
        <control>
-         <fstack> .List => ListItem((Env:Map,K:K,C:ControlCellFragment)) ...</fstack>
+         <fstack> .List => ListItem((Env:Map,K:K,C:ControlCellFragment, L)) ...</fstack>
+         <lstack> L => .List </lstack>
          C
        </control>
        <env> Env => GEnv </env>
@@ -302,7 +303,8 @@ are short-circuited: */
 
   rule <k> return(V:Val); ~> _ => V ~> K </k>
        <control>
-         <fstack> ListItem((Env:Map,K:K,C:ControlCellFragment)) => .List ...</fstack>
+         <fstack> ListItem((Env:Map,K:K,C:ControlCellFragment,L)) => .List ...</fstack>
+         <lstack> _ => L </lstack>
          (_ => C)
        </control>
        <env> _ => Env </env>
