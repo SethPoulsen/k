@@ -158,7 +158,9 @@ for the KOOL object-oriented constructs.
   syntax Id ::= "Object" [token] | "Main" [token]
 
   syntax Decl ::= "var" Exps ";"
+                | "private var" Exps ";"
                 | "method" Id "(" Ids ")" Block  // called "function" in SIMPLE
+                | "private method" Id "(" Ids ")" Block  // called "function" in SIMPLE
                 | "class" Id Block               // KOOL
                 | "class" Id "extends" Id Block  // KOOL
 
@@ -232,7 +234,9 @@ for the KOOL object-oriented constructs.
   rule if (E) S => if (E) S else {}                                 [macro]
   rule for(Start Cond; Step) {S} => {Start while (Cond) {S Step;}}  [macro]
   rule var E1::Exp, E2::Exp, Es::Exps; => var E1; var E2, Es;       [macro-rec]
+  rule private var E1::Exp, E2::Exp, Es::Exps; => private var E1; private var E2, Es;       [macro-rec]
   rule var X::Id = E; => var X; X = E;                              [macro]
+  rule private var X::Id = E; => private var X; X = E;                              [macro]
 
 //@ New desugaring rule
 
@@ -375,6 +379,8 @@ definition. */
        <env> Env => Env[X <- L] </env>
        <store>... .Map => L |-> undefined ...</store>
        <nextLoc> L:Int => L +Int 1 </nextLoc>
+
+  rule <k>private var X:Id; => var X:Id; ...</k>
 
 
   context var _:Id[HOLE];
@@ -726,6 +732,7 @@ understand and reason about if one overuses these features. */
        <store>... .Map => L |-> methodClosure(Class,OL,Xs,S) ...</store>
        <nextLoc> L => L +Int 1 </nextLoc>
 
+  rule <k>private method F:Id(Xs:Ids) S => method F:Id(Xs:Ids) S ... </k> 
 
 /*@ \subsubsection{New}
 
