@@ -58,13 +58,13 @@ untyped KOOL.  */
   syntax Param ::= Type Id
   syntax Params ::= List{Param,","}
 
-  syntax Decl ::= MemberDecl
-                | "private" MemberDecl
+  syntax Decl ::= Type Exps ";" [avoid]
+                | Type Id "(" Params ")" Block    // stays like in typed SIMPLE
+                | "private" Type Exps ";" [avoid]
+                | "private" Type Id "(" Params ")" Block    // stays like in typed SIMPLE
                 | "class" Id Block                // KOOL
                 | "class" Id "extends" Id Block   // KOOL
 
-  syntax MemberDecl ::= Type Exps ";" [avoid]
-                | Type Id "(" Params ")" Block    // stays like in typed SIMPLE
 
   // syntax Decl ::= "var" Exps ";"
   //               | "private var" Exps ";"
@@ -143,8 +143,8 @@ untyped KOOL.  */
   rule for(Start Cond; Step) {S::Stmts} => {Start while(Cond){S Step;}} [macro]
   rule T:Type E1:Exp, E2:Exp, Es:Exps; => T E1; T E2, Es;               [macro-rec]
   rule T:Type X:Id = E; => T X; X = E;                                  [macro]
-  rule private T::Type E1::Exp, E2::Exp, Es::Exps; => private T E1; private T E2, Es;           [macro-rec]
-  rule private T::Type X::Id = E; => private T X; X = E;                                [macro]
+  rule private T:Type E1:Exp, E2:Exp, Es:Exps; => private T E1; private T E2, Es;     [macro-rec]
+  rule private T:Type X:Id = E; => private T X; X = E;                                [macro]
 
   // rule private var E1::Exp, E2::Exp, Es::Exps; => private var E1; private var E2, Es;       [macro-rec]
   // rule private var X::Id = E; => private var X; X = E;        
@@ -403,6 +403,9 @@ KOOL).  */
   rule <k> lvalue(X:Id => loc(L)) ...</k>  <env>... X |-> L:Int ...</env>
     [structural]
 
+  rule <k> lvalue(X:Id => loc(L)) ...</k> <pvate>... X |-> L:Int ...</pvate>
+    [structural]
+
   context lvalue(_::Exp[HOLE::Exps])
   context lvalue(HOLE::Exp[_::Exps])
 
@@ -473,15 +476,16 @@ current status of the \textsf{return} cell and then pop it when the
 method returns.  We have to do the same with the current object
 environment, so we group them together in the stack frame.  */
 
-  syntax KItem ::= fstackFrame(Map, K, List, Type, K)
+  syntax KItem ::= fstackFrame(Map, Map, K, List, Type, K)
 
   rule <k> methodClosure(_->T,Class,OL,Ps,S)(Vs:Vals) ~> K
            => mkDecls(Ps,Vs) S return; </k>
        <env> Env => .Map </env>
+       <pvate> PEnv => .Map </pvate>
        <store>... OL |-> objectClosure(_, EStack)...</store>
      //<br/> // TODO(KORE): support latex annotations #1799
        <control>
-          <fstack> .List => ListItem(fstackFrame(Env, K, XS, T', <crntObj> Obj' </crntObj>)) ...</fstack>
+          <fstack> .List => ListItem(fstackFrame(Env, PEnv, K, XS, T', <crntObj> Obj' </crntObj>)) ...</fstack>
           <xstack> XS </xstack>
           <returnType> T' => T </returnType>
           <crntObj> Obj' => <crntClass> Class </crntClass> <envStack> EStack </envStack> </crntObj>
@@ -499,12 +503,13 @@ unchanged.  */
            => subtype(typeOf(V), T) ~> true? ~> unsafeCast(V, T) ~> K
        </k>
        <control>
-         <fstack> ListItem(fstackFrame(Env, K, XS, RT, <crntObj> CO </crntObj>)) => .List ...</fstack>
+         <fstack> ListItem(fstackFrame(Env, PEnv, K, XS, RT, <crntObj> CO </crntObj>)) => .List ...</fstack>
          <xstack> _ => XS </xstack>
          <returnType> T:Type => RT </returnType>
          <crntObj> _ => CO </crntObj>
        </control>
        <env> _ => Env </env>
+       <pvate> PEnv => .Map </pvate>
 
 
 /*@ \subsubsection{Assignment}
@@ -602,6 +607,12 @@ the only difference is the addition of the types. */
        <store>... .Map => L|->methodClosure(getTypes(Ps)->T,C,OL,Ps,S) ...</store>
        <nextLoc> L => L +Int 1 </nextLoc>
 
+  rule <k> T:Type F:Id(Ps:Params) S => . ...</k>
+       <crntClass> C </crntClass>
+       <location> OL </location>
+       <pvate> Env => Env[F <- L] </pvate>
+       <store>... .Map => L|->methodClosure(getTypes(Ps)->T,C,OL,Ps,S) ...</store>
+       <nextLoc> L => L +Int 1 </nextLoc>
 
 /*@ \subsubsection{New}
 
@@ -618,6 +629,7 @@ those in untyped KOOL. */
   rule <k> new Class:Id(Vs:Vals) ~> K
            => create(Class) ~> (storeObj ~> ((Class(Vs)); return this;)) </k>
        <env> Env => .Map </env>
+       <pvate> PEnv => .Map </pvate>
        <nextLoc> L:Int => L +Int 1 </nextLoc>
      //<br/> // TODO(KORE): support latex annotations #1799
        <control>
@@ -628,7 +640,7 @@ those in untyped KOOL. */
                       <location> L </location>
          </crntObj>
          <returnType> T => Class </returnType>
-         <fstack> .List => ListItem(fstackFrame(Env, K, XS, T, <crntObj>Obj</crntObj>)) ...</fstack>
+         <fstack> .List => ListItem(fstackFrame(Env, PEnv, K, XS, T, <crntObj>Obj</crntObj>)) ...</fstack>
        </control>
 
   syntax KItem ::= create(Id)
@@ -682,8 +694,8 @@ Like in untyped KOOL. */
 
 Like in untyped KOOL. */
 
-  rule <k> X:Id => this . X ...</k> <env> Env:Map </env>
-    requires notBool(X in keys(Env))  [structural]
+  rule <k> X:Id => this . X ...</k> <env> Env:Map </env> <pvate> PEnv </pvate>
+    requires notBool(X in keys(Env)) andBool notBool(X in keys(PEnv)) [structural]
 
   context HOLE . _::Id requires (HOLE =/=K super)
 
@@ -692,10 +704,11 @@ Like in untyped KOOL. */
        . X:Id
     => lookupMember(<envStack> ListItem((Class,EnvC)) EStack </envStack>, X)
     [structural]*/
-  rule objectClosure(Class:Id,
+  rule <k> (objectClosure(Class:Id,
                      ListItem(envStackFrame(Class,Env,PEnv)) EStack)
        . X:Id
-    => lookupMember(ListItem(envStackFrame(Class,Env,PEnv)) EStack, X)
+    => lookupMember(ListItem(envStackFrame(Class,Env,PEnv)) EStack, X, Class ==K CrntClass)) ... </k> 
+        <crntClass> CrntClass </crntClass>
     [structural]
   rule objectClosure(Class:Id,
                      (ListItem(envStackFrame(Class':Id,_,_)) => .List) EStack)
@@ -706,7 +719,7 @@ Like in untyped KOOL. */
        <crntClass> Class </crntClass>
        <envStack>... ListItem((Class,EnvC:EnvCell)) EStack </envStack>
     [structural]*/
-  rule <k> super . X => lookupMember(EStack, X) ...</k>
+  rule <k> super . X => lookupMember(EStack, X, false) ...</k>
        <crntClass> Class:Id </crntClass>
        <envStack> ListItem(envStackFrame(Class,_,_)) EStack </envStack>
     [structural]
@@ -723,14 +736,19 @@ The method lookup is the same as in untyped KOOL.  */
        <env>... X |-> L ...</env>
        <store>... L |-> V:Val ...</store>  [lookup]
 
+  rule <k> (X:Id => V)(_:Exps) ...</k>
+       <pvate>... X |-> L ...</pvate>
+       <store>... L |-> V:Val ...</store>  [lookup]
+
   rule <k> (X:Id => this . X)(_:Exps) ...</k>
-       <env> Env </env>
-    requires notBool(X in keys(Env))  [structural]
+       <env> Env </env> <pvate> PEnv </pvate>
+    requires notBool(X in keys(Env)) andBool notBool(X in keys(PEnv)) [structural]
 
   context HOLE._::Id(_) requires HOLE =/=K super
 
-  rule (objectClosure(_, EStack) . X
-    => lookupMember(EStack, X:Id))(_:Exps)  [structural]
+  rule <k> (objectClosure(Class, EStack) . X
+    => lookupMember(EStack, X:Id, Class ==K CrntClass))(_:Exps)...</k>
+        <crntClass> CrntClass </crntClass> [structural]
 
 /*  rule <k> (super . X
             => lookupMember(<envStack>EStack</envStack>,X))(_:Exps)...</k>
@@ -738,7 +756,7 @@ The method lookup is the same as in untyped KOOL.  */
        <envStack>... ListItem((Class,_)) EStack </envStack>
     [structural]*/
   rule <k> (super . X
-            => lookupMember(EStack,X))(_:Exps)...</k>
+            => lookupMember(EStack,X,false))(_:Exps)...</k>
        <crntClass> Class:Id </crntClass>
        <envStack> ListItem(envStackFrame(Class,_,_)) EStack </envStack>
     [structural]
@@ -790,8 +808,8 @@ can indeed be cast to the claimed type. */
 
 Like in untyped KOOL. */
 
-  rule <k> lvalue(X:Id => this . X) ...</k>  <env> Env </env>
-    requires notBool(X in keys(Env))  [structural]
+  rule <k> lvalue(X:Id => this . X) ...</k>  <env> Env </env> <pvate> PEnv </pvate>
+    requires notBool(X in keys(Env)) andBool notBool(X in keys(PEnv)) [structural]
 
   context lvalue((HOLE . _)::Exp)
 
@@ -800,11 +818,11 @@ Like in untyped KOOL. */
               . X
               => lookupMember(<envStack> ListItem((C,EnvC)) EStack </envStack>,
                               X))  [structural]*/
-  rule lvalue(objectClosure(C:Id,
+  rule <k> (lvalue(objectClosure(C:Id,
                             ListItem(envStackFrame(C,Env,PEnv)) EStack)
               . X
-              => lookupMember(ListItem(envStackFrame(C,Env,PEnv)) EStack,
-                              X))  [structural]
+              => lookupMember(ListItem(envStackFrame(C,Env,PEnv)) EStack, X, C ==K CrntClass)))...</k> 
+       <crntClass> CrntClass </crntClass>  [structural]
   rule lvalue(objectClosure(C,
                             (ListItem(envStackFrame(C',_,_)) => .List) EStack)
               . X)
@@ -815,17 +833,17 @@ Like in untyped KOOL. */
 
 Like in untyped KOOL. */
 
-  syntax Exp ::= lookupMember(List,Id)  [function]
+  syntax Exp ::= lookupMember(List,Id,Bool)  [function]
 
-  rule lookupMember(ListItem(envStackFrame(_, X |-> L _,_)) _, X) => lookup(L)
-  rule lookupMember(ListItem(envStackFrame(_,_, X |-> L _)) _, X) => lookup(L)
+  rule lookupMember(ListItem(envStackFrame(_, X |-> L _,_)) _, X, _) => lookup(L)
+  rule lookupMember(ListItem(envStackFrame(_,_, X |-> L _)) _, X, true) => lookup(L)
 
   // TODO: fix rule below as shown once we support functions with deep rewrites
   // rule lookupMember(<envStack> ListItem((_, <env> Env </env>)) => .List
   //                     ...</envStack>, X)
   //   requires notBool(X in keys(Env))
-  rule lookupMember(ListItem(envStackFrame(_, Env,PEnv)) L, X)
-    => lookupMember(L, X)
+  rule lookupMember(ListItem(envStackFrame(_, Env,PEnv)) L, X, _)
+    => lookupMember(L, X, false)
     requires notBool(X in keys(Env)) andBool notBool(X in keys(PEnv))
 
 
