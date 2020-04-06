@@ -607,7 +607,7 @@ the only difference is the addition of the types. */
        <store>... .Map => L|->methodClosure(getTypes(Ps)->T,C,OL,Ps,S) ...</store>
        <nextLoc> L => L +Int 1 </nextLoc>
 
-  rule <k> T:Type F:Id(Ps:Params) S => . ...</k>
+  rule <k> private T:Type F:Id(Ps:Params) S => . ...</k>
        <crntClass> C </crntClass>
        <location> OL </location>
        <pvate> Env => Env[F <- L] </pvate>
