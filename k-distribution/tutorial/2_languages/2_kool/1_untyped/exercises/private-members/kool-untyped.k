@@ -750,7 +750,12 @@ understand and reason about if one overuses these features. */
        <store>... .Map => L |-> methodClosure(Class,OL,Xs,S) ...</store>
        <nextLoc> L => L +Int 1 </nextLoc>
 
-  rule <k>private method F:Id(Xs:Ids) S => method F:Id(Xs:Ids) S ... </k> 
+  rule <k>private method F:Id(Xs:Ids) S => . ... </k> 
+       <crntClass> Class:Id </crntClass>
+       <location> OL:Int </location>
+       <private> Env => Env[F <- L] </private>
+       <store>... .Map => L |-> methodClosure(Class,OL,Xs,S) ...</store>
+       <nextLoc> L => L +Int 1 </nextLoc>
 
 /*@ \subsubsection{New}
 
@@ -889,9 +894,10 @@ invocations see the entire object, as needed for dynamic method dispatch. */
     => lookupMember(envStackFrame(Class,EnvC) EStack, X)
     [structural]*/
 
-  rule objectClosure(Class:Id, ListItem(envStackFrame(Class,Env,PEnv)) EStack)
+  rule <k> (objectClosure(Class:Id, ListItem(envStackFrame(Class,Env,PEnv)) EStack)
        . X:Id
-    => lookupMember(ListItem(envStackFrame(Class,Env,PEnv)) EStack, X)
+    => lookupMember(ListItem(envStackFrame(Class,Env,PEnv)) EStack, X, Class ==K CrntClass)) ... </k> 
+        <crntClass> CrntClass </crntClass>
     [structural]
 
   rule objectClosure(Class:Id, (ListItem(envStackFrame(Class':Id,_,_)) => .List) _)
@@ -902,7 +908,7 @@ invocations see the entire object, as needed for dynamic method dispatch. */
        <crntClass> Class </crntClass>
        <envStack>... envStackFrame(Class,EnvC) EStack </envStack>
     [structural]*/
-  rule <k> super . X => lookupMember(EStack, X) ...</k>
+  rule <k> super . X => lookupMember(EStack, X, false) ...</k>
        <crntClass> Class:Id </crntClass>
        <envStack> ListItem(envStackFrame(Class,_,_)) EStack </envStack>
     [structural]
@@ -947,8 +953,9 @@ method call or the array access.  */
 
   context HOLE._::Id(_) when HOLE =/=K super
 
-  rule (objectClosure(_, EStack) . X
-    => lookupMember(EStack, X:Id))(_:Exps)  [structural]
+  rule <k> (objectClosure(Class, EStack) . X
+    => lookupMember(EStack, X:Id, Class ==K CrntClass))(_:Exps)...</k>
+        <crntClass> CrntClass </crntClass> [structural]
 
 /*  rule <k> (super . X
             => lookupMember(EStack,X))(_:Exps)...</k>
@@ -956,7 +963,7 @@ method call or the array access.  */
        <envStack>... envStackFrame(Class,_) EStack </envStack>
     [structural]*/
   rule <k> (super . X
-            => lookupMember(EStack,X))(_:Exps)...</k>
+            => lookupMember(EStack,X,false))(_:Exps)...</k>
        <crntClass> Class </crntClass>
        <envStack> ListItem(envStackFrame(Class,_,_)) EStack </envStack>
     [structural]
@@ -1044,10 +1051,12 @@ member's location based on the current class of the object. */
               . X
               => lookupMember(<envStack> envStackFrame(C,EnvC) EStack </envStack>,
                               X))  [structural]*/
-  rule lvalue(objectClosure(Class, ListItem(envStackFrame(Class,Env,PEnv)) EStack)
+  rule <k> (lvalue(objectClosure(Class, ListItem(envStackFrame(Class,Env,PEnv)) EStack)
               . X
               => lookupMember(ListItem(envStackFrame(Class,Env,PEnv)) EStack,
-                              X))  [structural]
+                              X, Class ==K CrntClass)))...</k> 
+       <crntClass> CrntClass </crntClass>  [structural]
+
   rule lvalue(objectClosure(Class, (ListItem(envStackFrame(Class':Id,_,_)) => .List) _)
               . X)
     when Class =/=K Class'  [structural]
@@ -1059,24 +1068,24 @@ It searches for the given member in the given environment stack,
 starting with the most concrete class and going up in the hierarchy. */
 
   // TODO(KORE): clarify sort inferences #1803
-  syntax Exp ::= lookupMember(List, Id)  [function]
+  syntax Exp ::= lookupMember(List, Id, Bool)  [function]
   /*
   syntax KItem ::= lookupMember(EnvStackCell,Id)  [function]
   */
 
 //  rule lookupMember(<envStack> envStackFrame(_, <env>... X|->L ...</env>) ...</envStack>, X)
 //    => lookup(L)
-  rule lookupMember(ListItem(envStackFrame(_, X|->L _,_)) _, X)
+  rule lookupMember(ListItem(envStackFrame(_, X|->L _,_)) _, X, _)
     => lookup(L)
 
-  rule lookupMember(ListItem(envStackFrame(_,_, X|->L _)) _, X)
+  rule lookupMember(ListItem(envStackFrame(_,_, X|->L _)) _, X, true)
     => lookup(L)
 
 //  rule lookupMember(<envStack> envStackFrame(_, <env> Env </env>) => .List ...</envStack>, X)
 //    when notBool(X in keys(Env))
-  rule lookupMember(ListItem(envStackFrame(_, Env, PEnv)) Rest, X) =>
-       lookupMember(Rest, X)
-    when notBool(X in keys(Env)) andBool notBool(X in keys(PEnv))
+  rule lookupMember(ListItem(envStackFrame(_, Env, PEnv)) Rest, X, IsOwnClass) =>
+       lookupMember(Rest, X, false)
+    when notBool(X in keys(Env)) andBool notBool(X in keys(PEnv)) // andBool IsOwnClass) 
 //TODO: beautify the above
 
 endmodule
