@@ -307,12 +307,13 @@ member declarations (\textsf{declarations}).
                       //<br/> // TODO(KORE): support latex annotations #1799
                         <crntObj color="Fuchsia">  // KOOL
                            <crntClass> Object </crntClass>
-                           <envStack> .List </envStack>
+                           <envStack color="red"> .List </envStack>
                            <location multiplicity="?"> .K </location>
                         </crntObj>
                       </control>
                     //<br/> // TODO(KORE): support latex annotations #1799
                       <env color="violet"> .Map </env>
+                      <private color="yellow"> .Map </private>
                       <holds color="black"> .Map </holds>
                       <id color="pink"> 0 </id>
                     </thread>
@@ -380,13 +381,22 @@ definition. */
        <store>... .Map => L |-> undefined ...</store>
        <nextLoc> L:Int => L +Int 1 </nextLoc>
 
-  rule <k>private var X:Id; => var X:Id; ...</k>
-
+  rule <k>private var X:Id; => . ...</k>
+       <private> Env => Env[X <- L] </private>
+       <store>... .Map => L |-> undefined ...</store>
+       <nextLoc> L:Int => L +Int 1 </nextLoc>
 
   context var _:Id[HOLE];
 
   rule <k> var X:Id[N:Int]; => . ...</k>
        <env> Env => Env[X <- L] </env>
+       <store>... .Map => L |-> array(L +Int 1, N)
+                          (L +Int 1) ... (L +Int N) |-> undefined ...</store>
+       <nextLoc> L:Int => L +Int 1 +Int N </nextLoc>
+    when N >=Int 0
+
+  rule <k> private var X:Id[N:Int]; => . ...</k>
+       <private> Env => Env[X <- L] </private>
        <store>... .Map => L |-> array(L +Int 1, N)
                           (L +Int 1) ... (L +Int N) |-> undefined ...</store>
        <nextLoc> L:Int => L +Int 1 +Int N </nextLoc>
@@ -410,6 +420,9 @@ definition. */
        <env>... X |-> L ...</env>
        <store>... L |-> V:Val ...</store>  [lookup]
 
+  rule <k> X:Id => V ...</k>
+       <private>... X |-> L ...</private>
+       <store>... L |-> V:Val ...</store>  [lookup]
 
   context ++(HOLE => lvalue(HOLE))
   rule <k> ++loc(L) => I +Int 1 ...</k>
@@ -453,11 +466,12 @@ interestingly, the semantics of return stays unchanged. */
 
   rule <k> return(V:Val); ~> _ => V ~> K </k>
        <control>
-         <fstack> ListItem(fstackFrame(Env,K,XS,<crntObj> CO </crntObj>)) => .List ...</fstack>
+         <fstack> ListItem(fstackFrame(Env,PEnv,K,XS,<crntObj> CO </crntObj>)) => .List ...</fstack>
          <xstack> _ => XS </xstack>
          <crntObj> _ => CO </crntObj>
        </control>
        <env> _ => Env </env>
+       <private> _ => PEnv </private>
 
   syntax Val ::= "nothing"
   rule return; => return nothing;   [macro]
@@ -573,6 +587,9 @@ from SIMPLE unchanged. */
   rule <k> lvalue(X:Id => loc(L)) ...</k> <env>... X |-> L:Int ...</env>
     [structural]
 
+  rule <k> lvalue(X:Id => loc(L)) ...</k> <private>... X |-> L:Int ...</private>
+    [structural]
+
   context lvalue(_::Exp[HOLE::Exps])
   context lvalue(HOLE::Exp[_::Exps])
 
@@ -653,18 +670,19 @@ switch to method closure's class and object environment and execute
 the method body.  The \texttt{mkDecls} construct is the one that came
 with the unchanged semantics of SIMPLE above.  */
 
-  syntax KItem ::= fstackFrame(Map,K,List,K)
+  syntax KItem ::= fstackFrame(Map,Map,K,List,K)
   // TODO(KORE): drop the additional production once parsing issue #1842 is fixed
                  | (Map,K,K)
 
   rule <k> methodClosure(Class,OL,Xs,S)(Vs:Vals) ~> K
            => mkDecls(Xs,Vs) S return; </k>
        <env> Env => .Map </env>
+       <private> PEnv => .Map </private>
        <store>... OL |-> objectClosure(_, EnvStack)...</store>
      //<br/> // TODO(KORE): support latex annotations #1799
        <control>
           <xstack> XS </xstack>
-          <fstack> .List => ListItem(fstackFrame(Env, K, XS, <crntObj> Obj' </crntObj>))
+          <fstack> .List => ListItem(fstackFrame(Env, PEnv, K, XS, <crntObj> Obj' </crntObj>))
           ...</fstack>
           <crntObj> Obj' => <crntClass> Class </crntClass> <envStack> EnvStack </envStack> </crntObj>
        </control>
@@ -754,20 +772,21 @@ shortly).  The location where the object will be stored is also made
 available in the \textsf{crntObj} cell, so that method closures can
 refer to it (see rule above). */
 
-  syntax KItem ::= "envStackFrame" "(" Id "," Map ")"
+  syntax KItem ::= "envStackFrame" "(" Id "," Map "," Map ")"
 
   rule <k> new Class:Id(Vs:Vals) ~> K
            => create(Class) ~> storeObj ~> Class(Vs); return this; </k>
        <env> Env => .Map </env>
+       <private> PEnv => .Map </private>
        <nextLoc> L:Int => L +Int 1 </nextLoc>
      //<br/> // TODO(KORE): support latex annotations #1799
        <control> <xstack> XS </xstack>
          <crntObj> Obj
                    => <crntClass> Object </crntClass>
-                      <envStack> ListItem(envStackFrame(Object, .Map)) </envStack>
+                      <envStack> ListItem(envStackFrame(Object, .Map, .Map)) </envStack>
                       <location> L </location>
          </crntObj>
-         <fstack> .List => ListItem(fstackFrame(Env, K, XS, <crntObj> Obj </crntObj>)) ...</fstack>
+         <fstack> .List => ListItem(fstackFrame(Env, PEnv, K, XS, <crntObj> Obj </crntObj>)) ...</fstack>
        </control>
 
 /*@ The creation of a new object (the memory allocation part only) is
@@ -806,8 +825,9 @@ empty). */
 
   rule <k> addEnvLayer => . ...</k>
        <env> Env => .Map </env>
+       <private> PEnv => .Map </private>
        <crntClass> Class:Id </crntClass>
-       <envStack> .List => ListItem(envStackFrame(Class, Env)) ...</envStack>
+       <envStack> .List => ListItem(envStackFrame(Class, Env, PEnv)) ...</envStack>
     [structural]
 
 /*@ The following operation stores the created object at the location
@@ -855,8 +875,8 @@ solved with the corresponding rule borrowed from SIMPLE.  Note that the
 current object is not altered by \texttt{super}, so future method
 invocations see the entire object, as needed for dynamic method dispatch. */
 
-  rule <k> X:Id => this . X ...</k> <env> Env:Map </env>
-    when notBool(X in keys(Env))  [structural]
+  rule <k> X:Id => this . X ...</k> <env> Env:Map </env> <private> PEnv </private>
+    when notBool(X in keys(Env))  andBool notBool(X in keys(PEnv)) [structural]
 
   context HOLE._::Id when (HOLE =/=K super)
 
@@ -869,11 +889,12 @@ invocations see the entire object, as needed for dynamic method dispatch. */
     => lookupMember(envStackFrame(Class,EnvC) EStack, X)
     [structural]*/
 
-  rule objectClosure(Class:Id, ListItem(envStackFrame(Class,Env)) EStack)
+  rule objectClosure(Class:Id, ListItem(envStackFrame(Class,Env,PEnv)) EStack)
        . X:Id
-    => lookupMember(ListItem(envStackFrame(Class,Env)) EStack, X)
+    => lookupMember(ListItem(envStackFrame(Class,Env,PEnv)) EStack, X)
     [structural]
-  rule objectClosure(Class:Id, (ListItem(envStackFrame(Class':Id,_)) => .List) _)
+
+  rule objectClosure(Class:Id, (ListItem(envStackFrame(Class':Id,_,_)) => .List) _)
        . X:Id
     when Class =/=K Class'  [structural]
 
@@ -883,11 +904,11 @@ invocations see the entire object, as needed for dynamic method dispatch. */
     [structural]*/
   rule <k> super . X => lookupMember(EStack, X) ...</k>
        <crntClass> Class:Id </crntClass>
-       <envStack> ListItem(envStackFrame(Class,_)) EStack </envStack>
+       <envStack> ListItem(envStackFrame(Class,_,_)) EStack </envStack>
     [structural]
   rule <k> super . X ...</k>
        <crntClass> Class </crntClass>
-       <envStack> ListItem(envStackFrame(Class':Id,_)) => .List ...</envStack>
+       <envStack> ListItem(envStackFrame(Class':Id,_,_)) => .List ...</envStack>
     when Class =/=K Class'  [structural]
 
 /*@\subsubsection{Method invocation}
@@ -916,9 +937,13 @@ method call or the array access.  */
        <env>... X |-> L ...</env>
        <store>... L |-> V:Val ...</store>  [lookup]
 
+  rule <k> (X:Id => V)(_:Exps) ...</k>
+       <private>... X |-> L ...</private>
+       <store>... L |-> V:Val ...</store>  [lookup]
+
   rule <k> (X:Id => this . X)(_:Exps) ...</k>
-       <env> Env </env>
-    when notBool(X in keys(Env))  [structural]
+       <env> Env </env> <private> PEnv </private>
+    when notBool(X in keys(Env)) andBool notBool(X in keys(PEnv))  [structural]
 
   context HOLE._::Id(_) when HOLE =/=K super
 
@@ -933,11 +958,11 @@ method call or the array access.  */
   rule <k> (super . X
             => lookupMember(EStack,X))(_:Exps)...</k>
        <crntClass> Class </crntClass>
-       <envStack> ListItem(envStackFrame(Class,_)) EStack </envStack>
+       <envStack> ListItem(envStackFrame(Class,_,_)) EStack </envStack>
     [structural]
   rule <k> (super . X)(_:Exps) ...</k>
        <crntClass> Class </crntClass>
-       <envStack> ListItem(envStackFrame(Class':Id,_)) => .List ...</envStack>
+       <envStack> ListItem(envStackFrame(Class':Id,_,_)) => .List ...</envStack>
     when Class =/=K Class'  [structural]
 
   // TODO(KORE): fix getKLabel #1801
@@ -969,10 +994,10 @@ desired class.  It returns \texttt{true} iff it can find the class,
 otherwise it returns \texttt{false}; it only gets stuck when its first
 argument does not evaluate to an object.  */
 
-  rule objectClosure(_, ListItem(envStackFrame(C,_)) _)
+  rule objectClosure(_, ListItem(envStackFrame(C,_,_)) _)
        instanceOf C => true
 
-  rule objectClosure(_, (ListItem(envStackFrame(C,_)) => .List) _)
+  rule objectClosure(_, (ListItem(envStackFrame(C,_,_)) => .List) _)
        instanceOf C'  when C =/=K C'  [structural]
 //TODO: remove the sort cast ::Id of C above, when sort inference bug fixed
 
@@ -1009,8 +1034,8 @@ always explicit, the evaluation context enforces the object to be
 evaluated, and finally the second rule initiates the lookup for the
 member's location based on the current class of the object. */
 
-  rule <k> lvalue(X:Id => this . X) ...</k>  <env> Env </env>
-    when notBool(X in keys(Env))  [structural]
+  rule <k> lvalue(X:Id => this . X) ...</k>  <env> Env </env>  <private> PEnv </private>
+    when notBool(X in keys(Env)) andBool notBool(X in keys(PEnv)) [structural]
 
   context lvalue((HOLE . _)::Exp)
 
@@ -1019,11 +1044,11 @@ member's location based on the current class of the object. */
               . X
               => lookupMember(<envStack> envStackFrame(C,EnvC) EStack </envStack>,
                               X))  [structural]*/
-  rule lvalue(objectClosure(Class, ListItem(envStackFrame(Class,Env)) EStack)
+  rule lvalue(objectClosure(Class, ListItem(envStackFrame(Class,Env,PEnv)) EStack)
               . X
-              => lookupMember(ListItem(envStackFrame(Class,Env)) EStack,
+              => lookupMember(ListItem(envStackFrame(Class,Env,PEnv)) EStack,
                               X))  [structural]
-  rule lvalue(objectClosure(Class, (ListItem(envStackFrame(Class':Id,_)) => .List) _)
+  rule lvalue(objectClosure(Class, (ListItem(envStackFrame(Class':Id,_,_)) => .List) _)
               . X)
     when Class =/=K Class'  [structural]
 
@@ -1041,14 +1066,17 @@ starting with the most concrete class and going up in the hierarchy. */
 
 //  rule lookupMember(<envStack> envStackFrame(_, <env>... X|->L ...</env>) ...</envStack>, X)
 //    => lookup(L)
-  rule lookupMember(ListItem(envStackFrame(_, X|->L _)) _, X)
+  rule lookupMember(ListItem(envStackFrame(_, X|->L _,_)) _, X)
+    => lookup(L)
+
+  rule lookupMember(ListItem(envStackFrame(_,_, X|->L _)) _, X)
     => lookup(L)
 
 //  rule lookupMember(<envStack> envStackFrame(_, <env> Env </env>) => .List ...</envStack>, X)
 //    when notBool(X in keys(Env))
-  rule lookupMember(ListItem(envStackFrame(_, Env)) Rest, X) =>
+  rule lookupMember(ListItem(envStackFrame(_, Env, PEnv)) Rest, X) =>
        lookupMember(Rest, X)
-    when notBool(X in keys(Env))
+    when notBool(X in keys(Env)) andBool notBool(X in keys(PEnv))
 //TODO: beautify the above
 
 endmodule
