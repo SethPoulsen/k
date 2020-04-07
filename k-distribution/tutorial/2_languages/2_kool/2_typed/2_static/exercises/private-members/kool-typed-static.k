@@ -126,6 +126,8 @@ the wrapper in the generated documentation, we associate it an
 
   syntax Decl ::= Type Exps ";" [avoid]
                 | Type Id "(" Params ")" Block
+                | "private" Type Exps ";" [avoid]
+                | "private" Type Id "(" Params ")" Block
                 | "class" Id Block
                 | "class" Id "extends" Id Block
 
@@ -204,6 +206,8 @@ the wrapper in the generated documentation, we associate it an
   rule for(Start Cond; Step) {S:Stmts} => {Start while(Cond){S Step;}}  [macro]
   rule T:Type E1:Exp, E2:Exp, Es:Exps; => T E1; T E2, Es;               [macro-rec]
   rule T:Type X:Id = E; => T X; X = E;                                  [macro]
+  rule private T:Type E1:Exp, E2:Exp, Es:Exps; => private T E1; private T E2, Es;           [macro-rec]
+  rule private T:Type X:Id = E; => private T X; X = E;                                [macro]
 
   rule class C:Id S => class C extends Object S
 
@@ -252,7 +256,7 @@ incrementally to the class' type environment).
 \textsf{return} cells.  These tasks are similar to SIMPLE's function
 tasks, so we do not discuss them here any further.
 \end{enumerate}
-Each \textsf{class} cell hods its name (in the \textsf{className}
+Each \textsf{class} cell holds its name (in the \textsf{className}
 cell) and the name of the class it extends (in the \textsf{extends}
 cell), as well as its type environment (in the \textsf{ctenv} cell)
 and the set of all its superclasses (in the \textsf{extendsAll} cell).
@@ -263,10 +267,11 @@ in the class extends relation. */
                   <tasks color="orange" multiplicity="?">
                     <task multiplicity="*" color="yellow">
                       <k color="green"> $PGM:Stmts </k>
-                      <tenv multiplicity="?" color="cyan"> .Map </tenv>
                       <ctenvT multiplicity="?" color="blue"> .Map </ctenvT>
-                      <returnType multiplicity="?" color="black"> void </returnType>
+                      <pctenvT multiplicity="?" color="red"> .Map </pctenvT>
                       <inClass multiplicity="?" color="Fuchsia"> .K </inClass>
+                      <tenv multiplicity="?" color="cyan"> .Map </tenv>
+                      <returnType multiplicity="?" color="black"> void </returnType>
                     </task>
                   </tasks>
 //                  <br/>
@@ -276,6 +281,7 @@ in the class extends relation. */
                       <baseClass color="Fuchsia"> .K </baseClass>
                       <baseClasses color="Fuchsia"> .Set </baseClasses>
                       <ctenv multiplicity="?" color="blue"> .Map </ctenv>
+                      <pctenv multiplicity="?" color="red"> .Map </pctenv>
                     </classData>
                   </classes>
                 </T>
@@ -434,8 +440,12 @@ PDF document because of its latex attribute (see the ASCII .k file,
 at the end of this module). */
 
   rule <k> T:Type X:Id; => checkType(T) ~> stmt ...</k>
-       <ctenvT> Rho (.Map => X |-> T) </ctenvT>
-    when notBool(X in keys(Rho))
+       <ctenvT> Rho (.Map => X |-> T) </ctenvT> <pctenvT> PRho </pctenvT>
+    when notBool(X in keys(Rho)) andBool notBool(X in keys(PRho))
+
+  rule <k> private T:Type X:Id; => checkType(T) ~> stmt ...</k>
+       <ctenvT> Rho </ctenvT> <pctenvT> PRho (.Map => X |-> T) </pctenvT>
+    when notBool(X in keys(Rho)) andBool notBool(X in keys(PRho))
 
   rule <k> T:Type X:Id; => stuck(T X;) ...</k>
        <ctenvT>... X |-> _ ...</ctenvT>
@@ -446,6 +456,13 @@ at the end of this module). */
                               +String Id2String(C) +String "\"!\n") </output>
     [structural]
 
+  rule <k> T:Type X:Id; => stuck(T X;) ...</k>
+       <pctenvT>... X |-> _ ...</pctenvT>
+       <inClass> C:Id </inClass>
+       <output>... .List => ListItem("Member \"" +String Id2String(X)
+                              +String "\" declared twice in class \""
+                              +String Id2String(C) +String "\"!\n") </output>
+    [structural]
 
 /*@ \subsubsection{Method declaration}
 
@@ -480,6 +497,22 @@ for example, inside other methods). */
              </task>)
     [structural]
 
+  rule <k>private T:Type F:Id(Ps:Params) S
+        => checkMethod(F, getTypes(Ps)->T, C')
+           ~> private getTypes(Ps)-> T F; ...</k>
+//       <br/>
+       <inClass> C </inClass>
+       <ctenvT> _ </ctenvT> // to ensure we are in a class pass
+       <className> C </className>
+       <baseClass> C' </baseClass>
+//       <br/>
+       (.Bag => <task>
+               <k> mkDecls(Ps) S </k>
+               <inClass> C </inClass>
+               <tenv> .Map </tenv>
+               <returnType> T </returnType>
+             </task>)
+    [structural]
 
 /*@ \subsubsection{Assignment}
 A more concrete value is allowed to be assigned to a more abstract
@@ -559,6 +592,7 @@ instance of this rule). */
                 <k> checkType(class(C')) ~> S </k>
                 <inClass> C </inClass>
                 <ctenvT> .Map </ctenvT>
+                <pctenvT> .Map </pctenvT>
              </task>)
     [structural]
 
@@ -687,6 +721,9 @@ wait.  Finally, the sixth rule below reports an error when the
   rule <k> X:Id => T ...</k>
        <ctenvT>... X |-> T ...</ctenvT>
 
+  rule <k> X:Id => T ...</k>
+       <pctenvT>... X |-> T ...</pctenvT>
+
   rule <k> X:Id => this . X ...</k>
        <tenv> Rho </tenv>
     when notBool(X in keys(Rho))
@@ -698,11 +735,29 @@ wait.  Finally, the sixth rule below reports an error when the
        <className> C </className>
        <ctenv>... X |-> T:Type ...</ctenv>
 
+  rule <k> class(C:Id) . X:Id => T ...</k>
+       <className> C </className>
+       <inClass> C' </inClass>
+       <pctenv>... X |-> T:Type ...</pctenv> when C ==K C'
+
+  rule <k> class(C:Id) . X:Id => stuck(class(C) . X) ...</k>
+       <className> C </className>
+       <inClass> C' </inClass>
+       <pctenv>... X |-> T:Type ...</pctenv> 
+       <output> ... .List => ListItem(  
+          "Private member \"" +String Id2String(X) 
+          +String "\" of class \"" +String Id2String(C) 
+          +String "\" cannot be accessed in class \"" 
+          +String Id2String(C') +String "\"\n") </output> when C =/=K C'
+
+              
+
   rule <k> class(C1:Id => C2) . X:Id ...</k>
        <className> C1 </className>
        <baseClass> C2:Id </baseClass>
        <ctenv> Rho </ctenv>
-    when notBool(X in keys(Rho))  [structural]
+       <pctenv> PRho </pctenv>
+    when notBool(X in keys(Rho)) andBool notBool(X in keys(PRho))  [structural]
 
   rule <k> class(Object) . X:Id => stuck(class(Object) . X) ...</k>
        <inClass> C:Id </inClass>
@@ -778,10 +833,11 @@ the \textsf{tasks} cell has been removed. */
   rule (<task>
           <k> stmt </k>
           <ctenvT> Rho </ctenvT>
+          <pctenvT> PRho </pctenvT>
           <inClass> C:Id </inClass>
         </task> => .Bag)
         <className> C </className>
-        (.Bag => <ctenv> Rho </ctenv>)
+        (.Bag => <ctenv> Rho </ctenv> <pctenv> PRho </pctenv>)
     [structural]
 
 // discard method task when done
