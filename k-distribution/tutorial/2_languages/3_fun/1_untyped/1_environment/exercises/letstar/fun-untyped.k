@@ -251,6 +251,7 @@ the left-hand sides of bindings, noting that the semantics will get stuck
 on incorrect bindings and that the type system will reject those programs. */
 
   syntax Exp ::= "let" Bindings "in" Exp
+               | "letstar" Bindings "in" Exp                   [prefer]
                | "letrec" Bindings "in" Exp                 [prefer]
 // The "prefer" attribute for letrec currently needed due to tool bug,
 // to make sure that "letrec" is not parsed as "let rec".
@@ -353,6 +354,7 @@ a constructor for function types:  */
                   > arith
                   > _:=__FUN-UNTYPED-COMMON
                   > let_in__FUN-UNTYPED-COMMON
+                    letstar_in__FUN-UNTYPED-COMMON
                     letrec_in__FUN-UNTYPED-COMMON
                     if_then_else__FUN-UNTYPED-COMMON
                   > _;__FUN-UNTYPED-COMMON
@@ -604,6 +606,11 @@ itself). */
   rule <k> letrec Bs in E
         => bind(names(Bs))~>assignTo(names(Bs),exps(Bs))~>E~>setEnv(Rho)...</k>
        <env> Rho </env>
+
+  // rule letstar Bs in E => let Bs in E
+  rule letstar B and Bs in E => let B in (letstar Bs in E) 
+  rule letstar .Bindings in E => E 
+  // rule letstar => let 
 
 /*@ Recall that our syntax allows \texttt{let} and \texttt{letrec} to
 take any expression in place of its binding.  This allows us to use
