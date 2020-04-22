@@ -345,6 +345,7 @@ a constructor for function types:  */
                     | ConstructorName "(" Types ")"
   syntax TypeCases ::= List{TypeCase,"|"}     [klabel(_|TypeCase_)]
 
+  syntax Name ::= "read" | "print"
 
 //@ \subsection{Additional Priorities}
 
@@ -437,6 +438,8 @@ part of the \K tutorial).  */
                   <k color="green"> $PGM:Exp </k>
                   <env color="violet"> .Map </env>
                   <store color="white"> .Map </store>
+                  <input color="magenta" stream="stdin"> .List </input>
+                  <output color="Orchid" stream="stdout"> .List </output>
                 </T>
 
 
@@ -453,6 +456,34 @@ add more values later.  */
 
 
 //@ \subsection{Lookup}
+
+  rule <k> read => I ...</k>
+       <input> ListItem(I:Int) => .List ...</input>  
+
+
+
+  syntax Exp ::= Printable
+  syntax Printable ::= Int | String
+
+  // context print ;
+
+  // rule <k> print(P:Printable,AEs => AEs); ...</k>
+  //      <output>... .List => ListItem(P) </output>  [print]
+
+  // rule print(.AExps); => .  [structural]
+
+
+  // rule <k> print E:Exp => E ... </k> 
+  //      <output>... .List => ListItem(E) </output>  [print]
+
+
+  syntax Exp ::= "$print"
+  rule print => fun $x -> $print $x 
+       
+  context $print HOLE:Exp 
+
+  rule <k> $print P:Printable => P ... </k>
+       <output>... .List => ListItem(P) </output>  [print]
 
   rule <k> X:Name => V ...</k>
        <env>... X |-> L ...</env>
