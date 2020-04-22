@@ -460,22 +460,8 @@ add more values later.  */
   rule <k> read => I ...</k>
        <input> ListItem(I:Int) => .List ...</input>  
 
-
-
   syntax Exp ::= Printable
   syntax Printable ::= Int | String
-
-  // context print ;
-
-  // rule <k> print(P:Printable,AEs => AEs); ...</k>
-  //      <output>... .List => ListItem(P) </output>  [print]
-
-  // rule print(.AExps); => .  [structural]
-
-
-  // rule <k> print E:Exp => E ... </k> 
-  //      <output>... .List => ListItem(E) </output>  [print]
-
 
   syntax Exp ::= "$print"
   rule print => fun $x -> $print $x 
@@ -488,7 +474,6 @@ add more values later.  */
   rule <k> X:Name => V ...</k>
        <env>... X |-> L ...</env>
        <store>... L |-> V ...</store>
-
 
 //@ \subsection{Arithmetic expressions}
 
