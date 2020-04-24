@@ -463,12 +463,12 @@ add more values later.  */
   syntax Exp ::= Printable
   syntax Printable ::= Int | String
 
-  syntax Exp ::= "$print"
-  rule print => fun $x -> $print $x 
+  rule print => fun $x -> printIt($x)
        
-  context $print HOLE:Exp 
+  syntax Val ::= printIt(Exp)
+  context printIt(HOLE)
 
-  rule <k> $print P:Printable => P ... </k>
+  rule <k> printIt(P:Printable) => P ... </k>
        <output>... .List => ListItem(P) </output>  [print]
 
   rule <k> X:Name => V ...</k>
