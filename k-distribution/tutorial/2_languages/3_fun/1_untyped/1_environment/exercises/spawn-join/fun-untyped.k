@@ -346,6 +346,8 @@ a constructor for function types:  */
   syntax TypeCases ::= List{TypeCase,"|"}     [klabel(_|TypeCase_)]
 
   syntax Name ::= "read" | "print"
+  syntax Exp ::= "spawn" Exp [prefer]
+              | "join" Exp [prefer, strict]
 
 //@ \subsection{Additional Priorities}
 
@@ -435,8 +437,13 @@ The \textsf{k}, \textsf{env}, and \textsf{store} cells are standard
 part of the \K tutorial).  */
 
   configuration <T color="yellow">
-                  <k color="green"> $PGM:Exp </k>
-                  <env color="violet"> .Map </env>
+                  <threads color="orange">
+                    <thread multiplicity="*" color="blue">
+                      <k color="green"> $PGM:Exp </k>
+                      <env color="LightSkyBlue"> .Map </env>
+                      <id color="red"> 0 </id>
+                    </thread>
+                  </threads>
                   <store color="white"> .Map </store>
                   <input color="magenta" stream="stdin"> .List </input>
                   <output color="Orchid" stream="stdout"> .List </output>
@@ -454,6 +461,12 @@ add more values later.  */
   syntax Vals ::= Bottoms
   syntax KResult ::= Val
 
+  syntax Name ::= "$x"
+
+  rule <k> spawn E => !T:Int ...</k> <env> Rho </env>
+      (.Bag => <thread>... <k> E </k> <env> Rho </env> <id> !T </id> ...</thread>)
+
+  rule <k> join T => T ...</k> <thread>... <k>.</k> <id>T</id> ...</thread>
 
 //@ \subsection{Lookup}
 
@@ -463,12 +476,12 @@ add more values later.  */
   syntax Exp ::= Printable
   syntax Printable ::= Int | String
 
-  syntax Exp ::= "$print"
-  rule print => fun $x -> $print $x 
+  rule print => fun $x -> printIt($x)
        
-  context $print HOLE:Exp 
+  syntax Val ::= printIt(Exp) [strict]
+  context printIt(HOLE)
 
-  rule <k> $print P:Printable => P ... </k>
+  rule <k> printIt(P:Printable) => P ... </k>
        <output>... .List => ListItem(P) </output>  [print]
 
   rule <k> X:Name => V ...</k>
@@ -640,7 +653,6 @@ Sequential composition, which is needed only to accumulate the
 side effects due to assignments, was strict in the first argument.
 Once evaluated, its first argument is simply discarded: */
 
-  syntax Name ::= "$x"
   rule ref => fun $x -> & $x                                 [macro]
   rule <k> & X => L ...</k>  <env>... X |-> L ...</env>
   rule <k> @ L:Int => V:Val ...</k>  <store>... L |-> V ...</store>

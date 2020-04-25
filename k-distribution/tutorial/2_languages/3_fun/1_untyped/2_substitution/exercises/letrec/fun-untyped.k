@@ -150,7 +150,7 @@ module FUN-UNTYPED-MACROS
 programs with mu in them, which is particularly useful for testing. */
 
   syntax Exp ::= "mu" Case
-
+               | "mu" Cases 
 endmodule
 
 
@@ -240,8 +240,30 @@ Multipe bindings are left as an exercise. */
 
   // changed because of parsing error
   //rule mu X:Name -> E => E[(mu X -> E) / X]
-  rule mu X:Name -> E => E[X |-> (mu X -> E)]
-  rule letrec F:Name = E in E' => let F = (mu F -> E) in E'  [macro]
+  // rule mu X:Name -> E => E[X |-> (mu X -> E)]
+  rule mu M:Map -> E => E[M]
+
+  rule letrec Bs in E => let bindingsToMu(Bs) in E  [macro]
+
+
+  // rule mu X1 -> E1 | X2 -> E2 => E1[X1 |-> (mu X1 -> E1 | X2 -> E2)][X2 |-> (mu X2 -> E2 | mu X1 -> E1)]
+  // rule letrec F:Name = E and F2:Name = E2 in E' => 
+  //     let F = (mu F -> E | F2 -> E2) and 
+  //     F2 = (mu F2 -> E2 | F -> E)
+  //     in E'  [macro]
+
+  // rule mu X:Name -> E => E[X |-> (mu X -> E)]
+  // rule letrec F:Name = E in E' => let F = ref 0 in F := E; E'[@ F |-> F]  [macro]
+
+  // rule mu X:Name = E and Bs:Bindings -> E => E[X |-> ]
+
+  // syntax Exp ::= "letrec" Bindings ^^ Bindings "in" Exp
+  // rule letrec Bs:Bindings in E => letrec Bs ^^ Bs in E[macro]
+  // rule letrec Bs1 ^^ F:Name = E and Bs2 in E' => letrec Bs1 ^^ Bs2 in let F = (mu Bs1) in E' 
+  // rule letrec Bs1 ^^ .Bindings in E' => E'
+
+  // rule letrec F and Bs in E => letrec F = 
+  // rule letrec .Bindings in E => E 
 
 /*@ We cannot have \texttt{\&} anymore, but we can give direct
 semantics to \texttt{ref}.  We also have to declare \texttt{ref} to
@@ -269,6 +291,10 @@ be a value, so that we will never heat on it. */
   syntax Exps ::= exps(Bindings)  [function]
   rule exps(.Bindings) => .Exps
   rule exps(_:Name=E and Bs) => E,exps(Bs)
+
+  syntax Bindings ::= bindingsToMu(Bindings) [function]
+  rule bindingsToMu(.Bindings) => .Bindings
+  rule bindingsToMu(F = E and Bs) => F = (mu F -> E) and bindingsToMu(Bs)
 
   /* Extra kore stuff */
   syntax KResult ::= Vals
