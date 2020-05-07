@@ -72,12 +72,11 @@ module LOGIK
   configuration <T color="yellow" multiplicity="?">
                   <k color="green"> $PGM:Pgm </k>
                   <fresh color="orange"> .K </fresh>
-                  <env color="violet" > .Map </env>
                   <clauses color="red">
                     <clause color="pink" multiplicity="*"> .K </clause>
                   </clauses>
                   <mgu> .K </mgu>
-                  // <output color="Orchid" stream="stdout"> .List </output> 
+                  <output color="Orchid" stream="stdout"> .List </output> 
                 </T>
                 <solution multiplicity="?"> .K </solution>
 
@@ -101,31 +100,14 @@ module LOGIK
 
   // Variable assignment/lookup
   context X is HOLE
-  // rule <k> X is Y ~> N => N </k>
-  //   <env> ... .Map => X |-> Y ... </env> 
-  //   // <env> Rho => Rho[X <- Y] </env> 
-
-  // rule <k> X:Term => Y ...</k>
-  //   <env> ... X |-> Y ...</env> 
 
   syntax KItem ::= Term "=" Term
   rule X is Y => X = Y
   rule T = T => .
 
-  // rule <k> X is Y ~> N => N </k>
-  //      (.Bag => <clause> X :- Y </clause>)
-
   // Output 
-  // syntax Term ::= Printable
-  // syntax Printable ::= Int | String
-
-  // rule print => fun $x -> printIt($x)
-       
-  // syntax Val ::= printIt(Exp)
-  // context write(HOLE)
-
-  // rule <k> write(P) => . ... </k>
-  //      <output>... .List => ListItem(P) </output>  [print]
+  rule <k> write(P) => . ... </k>
+       <output>... .List => ListItem(P) </output>  [print]
 
   // Preprocessing
   rule <k> C:Clause Pgm => Pgm </k>
