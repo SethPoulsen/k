@@ -17,9 +17,6 @@ module LOGIK-COMMON
                 | "[" Terms "|" Term "]"
   syntax Terms ::= List{Term,","}
 
-  syntax Val ::= OperationName "(" Vals ")"
-  syntax Vals ::= List{Val,","}
-
   syntax PredicateName
   syntax Predicate ::= PredicateName
                      | PredicateName "(" Terms ")"
@@ -35,18 +32,13 @@ module LOGIK-COMMON
   syntax Query ::= "?-" Predicates "."
   syntax Pgm ::= Query | Clause Pgm
 
-  rule [T1:Term,T2:Term,Ts:Terms|T':Term] => [T1|[T2,Ts|T']]      [macro]
-  rule [T:Term,Ts:Terms] => [T,Ts|[.Terms]]                      [macro]
+  syntax Term ::= "nil"
+  syntax OperationName ::= "cons"
+  rule [ T , Ts:Terms | T2 ] => cons(T, [Ts | T2])    [macro-rec]
+  rule [ .Terms | T2 ] => T2                          [macro]
+  rule [T:Term,Ts:Terms] => cons(T, [Ts])             [macro-rec]
+  rule [.Terms] => nil                                [macro]
 
-
-  // syntax OperationName ::= "cons"
-  // syntax Term ::= "nil"
-  // rule [Ts:Terms | T:Term] => cons(Ts, T)    [macro]
-  // rule [T:Terms ] => cons(T, nil)           [macro]
-  // rule [ .Terms ] => nil                          [macro]
-  // TODO; desugar this to just be Cons?
-  
-  // syntax KResult
 endmodule
 
 module LOGIK-SYNTAX
@@ -82,9 +74,6 @@ module LOGIK
 
   syntax KResult ::= Int | Bool | String
 
-  // syntax KResult ::= Val 
-  // syntax Val ::= Int | Bool | String
-
   // Binary operations
   rule I1 * I2 => I1 *Int I2
   rule I1 + I2 => I1 +Int I2
@@ -95,12 +84,8 @@ module LOGIK
   // Booleans 
   rule true => .  
 
-
-  context HOLE > HOLE
-
   // Variable assignment/lookup
   context X is HOLE
-
   syntax KItem ::= Term "=" Term
   rule X is Y => X = Y
   rule T = T => .
