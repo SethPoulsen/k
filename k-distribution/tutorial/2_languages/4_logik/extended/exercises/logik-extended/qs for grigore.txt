@@ -1,0 +1,9 @@
+questions: 
+
+WTH is this "SemanticCastToTerm????"
+
+In the extended syntax, why can't predicates be nested inside of predicates? 
+
+WTH is #renameVariables, #variablesMap, #variables, and #unifiable?
+
+Vals is not a child of anything else in the syntax...how is anything ever going to parsed as a Val????

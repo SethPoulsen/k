@@ -1,0 +1,606 @@
+cat tests/reverse-slow-3.logik.in 2>/dev/null | /home/seth/git/k/k-distribution/bin/krun tests/reverse-slow-3.logik --search --pattern "<solution> Solution:Map </solution>"  -d . | diff - tests/reverse-slow-3.logik.out
+[Error] Critical: Parser returned a non-zero exit code: 113
+Stdout:
+
+Stderr:
+[Error] Inner Parser: Unexpected sort Pgm for term parsed as production syntax
+Pgm ::= Clause Pgm. Expected: K
+	Source(/home/seth/git/k/k-distribution/tutorial/2_languages/4_logik/extended/exercises/logik-extended/./tests/reverse-slow-3.logik)
+	Location(1,1,9,58)
+0a1,3
+> Solution ==K ( L:Term |-> cons ( c , cons ( V0 , cons ( a , nil , .Vals ) , .Vals ) , .Vals ) )
+> T:Term |-> cons ( a , cons ( V0 , cons ( c , nil , .Vals ) , .Vals ) , .Vals )
+> X:Term |-> V0
+/home/seth/git/k/k-distribution/tutorial//../include/ktest.mak:77: recipe for target 'tests/reverse-slow-3.logik' failed
+make: [tests/reverse-slow-3.logik] Error 1 (ignored)
+cat tests/factorial.logik.in 2>/dev/null | /home/seth/git/k/k-distribution/bin/krun tests/factorial.logik --search --pattern "<solution> Solution:Map </solution>"  -d . | diff - tests/factorial.logik.out
+[Error] Critical: Parser returned a non-zero exit code: 113
+Stdout:
+
+Stderr:
+[Error] Inner Parser: Unexpected sort Pgm for term parsed as production syntax
+Pgm ::= Clause Pgm. Expected: K
+	Source(/home/seth/git/k/k-distribution/tutorial/2_languages/4_logik/extended/exercises/logik-extended/./tests/factorial.logik)
+	Location(1,1,9,19)
+0a1
+> Solution ==K ( R:Term |-> 120 )
+/home/seth/git/k/k-distribution/tutorial//../include/ktest.mak:77: recipe for target 'tests/factorial.logik' failed
+make: [tests/factorial.logik] Error 1 (ignored)
+cat tests/list-mergesort.logik.in 2>/dev/null | /home/seth/git/k/k-distribution/bin/krun tests/list-mergesort.logik --search --pattern "<solution> Solution:Map </solution>"  -d . | diff - tests/list-mergesort.logik.out
+[Error] Critical: Parser returned a non-zero exit code: 113
+Stdout:
+
+Stderr:
+[Error] Inner Parser: Unexpected sort Pgm for term parsed as production syntax
+Pgm ::= Clause Pgm. Expected: K
+	Source(/home/seth/git/k/k-distribution/tutorial/2_languages/4_logik/extended/exercises/logik-extended/./tests/list-mergesort.logik)
+	Location(1,1,18,23)
+0a1
+> Solution ==K ( S:Term |-> [ 3 , .Vals | [ 5 , .Vals | [ .Vals ] ] ] )
+/home/seth/git/k/k-distribution/tutorial//../include/ktest.mak:77: recipe for target 'tests/list-mergesort.logik' failed
+make: [tests/list-mergesort.logik] Error 1 (ignored)
+cat tests/list-member-3.logik.in 2>/dev/null | /home/seth/git/k/k-distribution/bin/krun tests/list-member-3.logik --search --pattern "<solution> Solution:Map </solution>"  -d . | diff - tests/list-member-3.logik.out
+[Error] Critical: Parser returned a non-zero exit code: 113
+Stdout:
+
+Stderr:
+[Error] Inner Parser: Unexpected sort Pgm for term parsed as production syntax
+Pgm ::= Clause Pgm. Expected: K
+	Source(/home/seth/git/k/k-distribution/tutorial/2_languages/4_logik/extended/exercises/logik-extended/./tests/list-member-3.logik)
+	Location(1,1,5,51)
+0a1,3
+>   Solution ==K ( X:Term |-> c )
+> #Or
+>   Solution ==K ( X:Term |-> e )
+/home/seth/git/k/k-distribution/tutorial//../include/ktest.mak:77: recipe for target 'tests/list-member-3.logik' failed
+make: [tests/list-member-3.logik] Error 1 (ignored)
+cat tests/reverse-slow-1.logik.in 2>/dev/null | /home/seth/git/k/k-distribution/bin/krun tests/reverse-slow-1.logik --search --pattern "<solution> Solution:Map </solution>"  -d . | diff - tests/reverse-slow-1.logik.out
+[Error] Critical: Parser returned a non-zero exit code: 113
+Stdout:
+
+Stderr:
+[Error] Inner Parser: Unexpected sort Pgm for term parsed as production syntax
+Pgm ::= Clause Pgm. Expected: K
+	Source(/home/seth/git/k/k-distribution/tutorial/2_languages/4_logik/extended/exercises/logik-extended/./tests/reverse-slow-1.logik)
+	Location(1,1,10,44)
+0a1
+> Solution ==K ( L:Term |-> cons ( c , cons ( b , cons ( a , nil , .Vals ) , .Vals ) , .Vals ) )
+/home/seth/git/k/k-distribution/tutorial//../include/ktest.mak:77: recipe for target 'tests/reverse-slow-1.logik' failed
+make: [tests/reverse-slow-1.logik] Error 1 (ignored)
+cat tests/append-5.logik.in 2>/dev/null | /home/seth/git/k/k-distribution/bin/krun tests/append-5.logik --search --pattern "<solution> Solution:Map </solution>"  -d . | diff - tests/append-5.logik.out
+[Error] Critical: Parser returned a non-zero exit code: 113
+Stdout:
+
+Stderr:
+[Error] Inner Parser: Unexpected sort Pgm for term parsed as production syntax
+Pgm ::= Clause Pgm. Expected: K
+	Source(/home/seth/git/k/k-distribution/tutorial/2_languages/4_logik/extended/exercises/logik-extended/./tests/append-5.logik)
+	Location(1,1,5,39)
+0a1
+> #False
+/home/seth/git/k/k-distribution/tutorial//../include/ktest.mak:77: recipe for target 'tests/append-5.logik' failed
+make: [tests/append-5.logik] Error 1 (ignored)
+cat tests/append-4.logik.in 2>/dev/null | /home/seth/git/k/k-distribution/bin/krun tests/append-4.logik -d . --search --pattern "<solution> Solution:Map </solution>" --bound 5 | diff - tests/append-4.logik.out
+[Error] Critical: Parser returned a non-zero exit code: 113
+Stdout:
+
+Stderr:
+[Error] Inner Parser: Unexpected sort Pgm for term parsed as production syntax
+Pgm ::= Clause Pgm. Expected: K
+	Source(/home/seth/git/k/k-distribution/tutorial/2_languages/4_logik/extended/exercises/logik-extended/./tests/append-4.logik)
+	Location(1,1,5,31)
+0a1,19
+>   Solution ==K ( L1:Term |-> cons ( V0 , cons ( V1 , cons ( V2 , cons ( V3 , nil , .Vals ) , .Vals ) , .Vals ) , .Vals ) )
+>   L2:Term |-> L2
+>   ( L3:Term |-> cons ( V0 , cons ( V1 , cons ( V2 , cons ( V3 , cons ( a , L2 , .Vals ) , .Vals ) , .Vals ) , .Vals ) , .Vals ) )
+> #Or
+>   Solution ==K ( L1:Term |-> cons ( V0 , cons ( V1 , cons ( V2 , nil , .Vals ) , .Vals ) , .Vals ) )
+>   L2:Term |-> L2
+>   ( L3:Term |-> cons ( V0 , cons ( V1 , cons ( V2 , cons ( a , L2 , .Vals ) , .Vals ) , .Vals ) , .Vals ) )
+> #Or
+>   Solution ==K ( L1:Term |-> cons ( V0 , cons ( V1 , nil , .Vals ) , .Vals ) )
+>   L2:Term |-> L2
+>   ( L3:Term |-> cons ( V0 , cons ( V1 , cons ( a , L2 , .Vals ) , .Vals ) , .Vals ) )
+> #Or
+>   Solution ==K ( L1:Term |-> cons ( V0 , nil , .Vals ) )
+>   L2:Term |-> L2
+>   ( L3:Term |-> cons ( V0 , cons ( a , L2 , .Vals ) , .Vals ) )
+> #Or
+>   Solution ==K ( L1:Term |-> nil )
+>   L2:Term |-> L2
+>   L3:Term |-> cons ( a , L2 , .Vals )
+/home/seth/git/k/k-distribution/tutorial/2_languages/4_logik/extended/exercises/logik-extended//../../../basic/Makefile:15: recipe for target 'tests/append-4.logik' failed
+make: [tests/append-4.logik] Error 1 (ignored)
+cat tests/family-2.logik.in 2>/dev/null | /home/seth/git/k/k-distribution/bin/krun tests/family-2.logik --search --pattern "<solution> Solution:Map </solution>"  -d . | diff - tests/family-2.logik.out
+[Error] Critical: Parser returned a non-zero exit code: 113
+Stdout:
+
+Stderr:
+[Error] Inner Parser: Unexpected sort Pgm for term parsed as production syntax
+Pgm ::= Clause Pgm. Expected: K
+	Source(/home/seth/git/k/k-distribution/tutorial/2_languages/4_logik/extended/exercises/logik-extended/./tests/family-2.logik)
+	Location(1,1,20,12)
+0a1,5
+>   Solution ==K ( X:Term |-> david )
+> #Or
+>   Solution ==K ( X:Term |-> jim )
+> #Or
+>   Solution ==K ( X:Term |-> steve )
+/home/seth/git/k/k-distribution/tutorial//../include/ktest.mak:77: recipe for target 'tests/family-2.logik' failed
+make: [tests/family-2.logik] Error 1 (ignored)
+cat tests/list-member-1.logik.in 2>/dev/null | /home/seth/git/k/k-distribution/bin/krun tests/list-member-1.logik --search --pattern "<solution> Solution:Map </solution>"  -d . | diff - tests/list-member-1.logik.out
+[Error] Critical: Parser returned a non-zero exit code: 113
+Stdout:
+
+Stderr:
+[Error] Inner Parser: Unexpected sort Pgm for term parsed as production syntax
+Pgm ::= Clause Pgm. Expected: K
+	Source(/home/seth/git/k/k-distribution/tutorial/2_languages/4_logik/extended/exercises/logik-extended/./tests/list-member-1.logik)
+	Location(1,1,5,31)
+0a1
+> Solution ==K .Map
+/home/seth/git/k/k-distribution/tutorial//../include/ktest.mak:77: recipe for target 'tests/list-member-1.logik' failed
+make: [tests/list-member-1.logik] Error 1 (ignored)
+cat tests/append-1.logik.in 2>/dev/null | /home/seth/git/k/k-distribution/bin/krun tests/append-1.logik --search --pattern "<solution> Solution:Map </solution>"  -d . | diff - tests/append-1.logik.out
+[Error] Critical: Parser returned a non-zero exit code: 113
+Stdout:
+
+Stderr:
+[Error] Inner Parser: Unexpected sort Pgm for term parsed as production syntax
+Pgm ::= Clause Pgm. Expected: K
+	Source(/home/seth/git/k/k-distribution/tutorial/2_languages/4_logik/extended/exercises/logik-extended/./tests/append-1.logik)
+	Location(1,1,5,40)
+0a1
+> Solution ==K ( V:Term |-> cons ( a , cons ( b , nil , .Vals ) , .Vals ) )
+/home/seth/git/k/k-distribution/tutorial//../include/ktest.mak:77: recipe for target 'tests/append-1.logik' failed
+make: [tests/append-1.logik] Error 1 (ignored)
+cat tests/list-takeout-2.logik.in 2>/dev/null | /home/seth/git/k/k-distribution/bin/krun tests/list-takeout-2.logik --search --pattern "<solution> Solution:Map </solution>"  -d . | diff - tests/list-takeout-2.logik.out
+[Error] Critical: Parser returned a non-zero exit code: 113
+Stdout:
+
+Stderr:
+[Error] Inner Parser: Unexpected sort Pgm for term parsed as production syntax
+Pgm ::= Clause Pgm. Expected: K
+	Source(/home/seth/git/k/k-distribution/tutorial/2_languages/4_logik/extended/exercises/logik-extended/./tests/list-takeout-2.logik)
+	Location(1,1,5,25)
+0a1,8
+>   Solution ==K ( L:Term |-> [ 1 , .Vals | [ 2 , .Vals | [ .Vals ] ] ] )
+>   ( X:Term |-> 3 )
+> #Or
+>   Solution ==K ( L:Term |-> [ 1 , .Vals | [ 3 , .Vals | [ .Vals ] ] ] )
+>   ( X:Term |-> 2 )
+> #Or
+>   Solution ==K ( L:Term |-> [ 2 , .Vals | [ 3 , .Vals | [ .Vals ] ] ] )
+>   X:Term |-> 1
+/home/seth/git/k/k-distribution/tutorial//../include/ktest.mak:77: recipe for target 'tests/list-takeout-2.logik' failed
+make: [tests/list-takeout-2.logik] Error 1 (ignored)
+cat tests/append-2.logik.in 2>/dev/null | /home/seth/git/k/k-distribution/bin/krun tests/append-2.logik --search --pattern "<solution> Solution:Map </solution>"  -d . | diff - tests/append-2.logik.out
+[Error] Critical: Parser returned a non-zero exit code: 113
+Stdout:
+
+Stderr:
+[Error] Inner Parser: Unexpected sort Pgm for term parsed as production syntax
+Pgm ::= Clause Pgm. Expected: K
+	Source(/home/seth/git/k/k-distribution/tutorial/2_languages/4_logik/extended/exercises/logik-extended/./tests/append-2.logik)
+	Location(1,1,5,56)
+0a1,5
+>   Solution ==K ( L1:Term |-> cons ( a , cons ( b , nil , .Vals ) , .Vals ) )
+>   ( L2:Term |-> nil )
+> #Or
+>   Solution ==K ( L1:Term |-> nil )
+>   L2:Term |-> cons ( b , cons ( a , nil , .Vals ) , .Vals )
+/home/seth/git/k/k-distribution/tutorial//../include/ktest.mak:77: recipe for target 'tests/append-2.logik' failed
+make: [tests/append-2.logik] Error 1 (ignored)
+cat tests/list-member-2.logik.in 2>/dev/null | /home/seth/git/k/k-distribution/bin/krun tests/list-member-2.logik --search --pattern "<solution> Solution:Map </solution>"  -d . | diff - tests/list-member-2.logik.out
+[Error] Critical: Parser returned a non-zero exit code: 113
+Stdout:
+
+Stderr:
+[Error] Inner Parser: Unexpected sort Pgm for term parsed as production syntax
+Pgm ::= Clause Pgm. Expected: K
+	Source(/home/seth/git/k/k-distribution/tutorial/2_languages/4_logik/extended/exercises/logik-extended/./tests/list-member-2.logik)
+	Location(1,1,5,31)
+0a1,11
+>   Solution ==K ( X:Term |-> 1 )
+> #Or
+>   Solution ==K ( X:Term |-> 2 )
+> #Or
+>   Solution ==K ( X:Term |-> 3 )
+> #Or
+>   Solution ==K ( X:Term |-> 4 )
+> #Or
+>   Solution ==K ( X:Term |-> 5 )
+> #Or
+>   Solution ==K ( X:Term |-> 6 )
+/home/seth/git/k/k-distribution/tutorial//../include/ktest.mak:77: recipe for target 'tests/list-member-2.logik' failed
+make: [tests/list-member-2.logik] Error 1 (ignored)
+cat tests/fact-3.logik.in 2>/dev/null | /home/seth/git/k/k-distribution/bin/krun tests/fact-3.logik --search --pattern "<solution> Solution:Map </solution>"  -d . | diff - tests/fact-3.logik.out
+[Error] Critical: Sort KResult is undefined.
+0a1
+> Solution ==K .Map
+/home/seth/git/k/k-distribution/tutorial//../include/ktest.mak:77: recipe for target 'tests/fact-3.logik' failed
+make: [tests/fact-3.logik] Error 1 (ignored)
+cat tests/reverse-fast-1.logik.in 2>/dev/null | /home/seth/git/k/k-distribution/bin/krun tests/reverse-fast-1.logik --search --pattern "<solution> Solution:Map </solution>"  -d . | diff - tests/reverse-fast-1.logik.out
+[Error] Critical: Parser returned a non-zero exit code: 113
+Stdout:
+
+Stderr:
+[Error] Inner Parser: Unexpected sort Pgm for term parsed as production syntax
+Pgm ::= Clause Pgm. Expected: K
+	Source(/home/seth/git/k/k-distribution/tutorial/2_languages/4_logik/extended/exercises/logik-extended/./tests/reverse-fast-1.logik)
+	Location(1,1,9,44)
+0a1
+> Solution ==K ( L:Term |-> cons ( c , cons ( b , cons ( a , nil , .Vals ) , .Vals ) , .Vals ) )
+/home/seth/git/k/k-distribution/tutorial//../include/ktest.mak:77: recipe for target 'tests/reverse-fast-1.logik' failed
+make: [tests/reverse-fast-1.logik] Error 1 (ignored)
+cat tests/list-append-1.logik.in 2>/dev/null | /home/seth/git/k/k-distribution/bin/krun tests/list-append-1.logik --search --pattern "<solution> Solution:Map </solution>"  -d . | diff - tests/list-append-1.logik.out
+[Error] Critical: Parser returned a non-zero exit code: 113
+Stdout:
+
+Stderr:
+[Error] Inner Parser: Unexpected sort Pgm for term parsed as production syntax
+Pgm ::= Clause Pgm. Expected: K
+	Source(/home/seth/git/k/k-distribution/tutorial/2_languages/4_logik/extended/exercises/logik-extended/./tests/list-append-1.logik)
+	Location(1,1,5,24)
+0a1
+> Solution ==K ( V:Term |-> [ a , .Vals | [ b , .Vals | [ .Vals ] ] ] )
+/home/seth/git/k/k-distribution/tutorial//../include/ktest.mak:77: recipe for target 'tests/list-append-1.logik' failed
+make: [tests/list-append-1.logik] Error 1 (ignored)
+cat tests/fact-1.logik.in 2>/dev/null | /home/seth/git/k/k-distribution/bin/krun tests/fact-1.logik --search --pattern "<solution> Solution:Map </solution>"  -d . | diff - tests/fact-1.logik.out
+[Error] Critical: Sort KResult is undefined.
+0a1
+> Solution ==K .Map
+/home/seth/git/k/k-distribution/tutorial//../include/ktest.mak:77: recipe for target 'tests/fact-1.logik' failed
+make: [tests/fact-1.logik] Error 1 (ignored)
+cat tests/list-reverse.logik.in 2>/dev/null | /home/seth/git/k/k-distribution/bin/krun tests/list-reverse.logik --search --pattern "<solution> Solution:Map </solution>"  -d . | diff - tests/list-reverse.logik.out
+[Error] Critical: Parser returned a non-zero exit code: 113
+Stdout:
+
+Stderr:
+[Error] Inner Parser: Unexpected sort Pgm for term parsed as production syntax
+Pgm ::= Clause Pgm. Expected: K
+	Source(/home/seth/git/k/k-distribution/tutorial/2_languages/4_logik/extended/exercises/logik-extended/./tests/list-reverse.logik)
+	Location(1,1,6,23)
+0a1
+> Solution ==K ( L:Term |-> [ 3 , .Vals | [ 2 , .Vals | [ 1 , .Vals | [ .Vals ] ] ] ] )
+/home/seth/git/k/k-distribution/tutorial//../include/ktest.mak:77: recipe for target 'tests/list-reverse.logik' failed
+make: [tests/list-reverse.logik] Error 1 (ignored)
+cat tests/reverse-fast-palindromes-2.logik.in 2>/dev/null | /home/seth/git/k/k-distribution/bin/krun tests/reverse-fast-palindromes-2.logik --search --pattern "<solution> Solution:Map </solution>"  -d . | diff - tests/reverse-fast-palindromes-2.logik.out
+[Error] Critical: Parser returned a non-zero exit code: 113
+Stdout:
+
+Stderr:
+[Error] Inner Parser: Unexpected sort Pgm for term parsed as production syntax
+Pgm ::= Clause Pgm. Expected: K
+	Source(/home/seth/git/k/k-distribution/tutorial/2_languages/4_logik/extended/exercises/logik-extended/./tests/reverse-fast-palindromes-2.logik)
+	Location(1,1,9,70)
+0a1,3
+> Solution ==K ( A:Term |-> V0 )
+> B:Term |-> V1
+> C:Term |-> V0
+/home/seth/git/k/k-distribution/tutorial//../include/ktest.mak:77: recipe for target 'tests/reverse-fast-palindromes-2.logik' failed
+make: [tests/reverse-fast-palindromes-2.logik] Error 1 (ignored)
+cat tests/fact-4.logik.in 2>/dev/null | /home/seth/git/k/k-distribution/bin/krun tests/fact-4.logik --search --pattern "<solution> Solution:Map </solution>"  -d . | diff - tests/fact-4.logik.out
+[Error] Critical: Sort KResult is undefined.
+0a1
+> #False
+/home/seth/git/k/k-distribution/tutorial//../include/ktest.mak:77: recipe for target 'tests/fact-4.logik' failed
+make: [tests/fact-4.logik] Error 1 (ignored)
+cat tests/takeout-1.logik.in 2>/dev/null | /home/seth/git/k/k-distribution/bin/krun tests/takeout-1.logik --search --pattern "<solution> Solution:Map </solution>"  -d . | diff - tests/takeout-1.logik.out
+[Error] Critical: Parser returned a non-zero exit code: 113
+Stdout:
+
+Stderr:
+[Error] Inner Parser: Unexpected sort Pgm for term parsed as production syntax
+Pgm ::= Clause Pgm. Expected: K
+	Source(/home/seth/git/k/k-distribution/tutorial/2_languages/4_logik/extended/exercises/logik-extended/./tests/takeout-1.logik)
+	Location(1,1,4,45)
+0a1,3
+>   Solution ==K ( L:Term |-> cons ( a , cons ( b , nil , .Vals ) , .Vals ) )
+> #Or
+>   Solution ==K ( L:Term |-> cons ( b , cons ( a , nil , .Vals ) , .Vals ) )
+/home/seth/git/k/k-distribution/tutorial//../include/ktest.mak:77: recipe for target 'tests/takeout-1.logik' failed
+make: [tests/takeout-1.logik] Error 1 (ignored)
+cat tests/reverse-slow-2.logik.in 2>/dev/null | /home/seth/git/k/k-distribution/bin/krun tests/reverse-slow-2.logik -d . --search --pattern "<solution> Solution:Map </solution>" --bound 1 | diff - tests/reverse-slow-2.logik.out
+[Error] Critical: Parser returned a non-zero exit code: 113
+Stdout:
+
+Stderr:
+[Error] Inner Parser: Unexpected sort Pgm for term parsed as production syntax
+Pgm ::= Clause Pgm. Expected: K
+	Source(/home/seth/git/k/k-distribution/tutorial/2_languages/4_logik/extended/exercises/logik-extended/./tests/reverse-slow-2.logik)
+	Location(1,1,12,44)
+0a1
+> Solution ==K ( L:Term |-> cons ( c , cons ( b , cons ( a , nil , .Vals ) , .Vals ) , .Vals ) )
+/home/seth/git/k/k-distribution/tutorial/2_languages/4_logik/extended/exercises/logik-extended//../../../basic/Makefile:11: recipe for target 'tests/reverse-slow-2.logik' failed
+make: [tests/reverse-slow-2.logik] Error 1 (ignored)
+cat tests/hanoi.logik.in 2>/dev/null | /home/seth/git/k/k-distribution/bin/krun tests/hanoi.logik --search --pattern "<solution> Solution:Map </solution>"  -d . | diff - tests/hanoi.logik.out
+[Error] Critical: Parser returned a non-zero exit code: 113
+Stdout:
+
+Stderr:
+[Error] Inner Parser: Unexpected sort Pgm for term parsed as production syntax
+Pgm ::= Clause Pgm. Expected: K
+	Source(/home/seth/git/k/k-distribution/tutorial/2_languages/4_logik/extended/exercises/logik-extended/./tests/hanoi.logik)
+	Location(1,1,14,37)
+0a1
+> Solution ==K .Map
+/home/seth/git/k/k-distribution/tutorial//../include/ktest.mak:77: recipe for target 'tests/hanoi.logik' failed
+make: [tests/hanoi.logik] Error 1 (ignored)
+cat tests/reverse-slow-palindromes-1.logik.in 2>/dev/null | /home/seth/git/k/k-distribution/bin/krun tests/reverse-slow-palindromes-1.logik -d . --search --pattern "<solution> Solution:Map </solution>" --bound 5 | diff - tests/reverse-slow-palindromes-1.logik.out
+[Error] Critical: Parser returned a non-zero exit code: 113
+Stdout:
+
+Stderr:
+[Error] Inner Parser: Unexpected sort Pgm for term parsed as production syntax
+Pgm ::= Clause Pgm. Expected: K
+	Source(/home/seth/git/k/k-distribution/tutorial/2_languages/4_logik/extended/exercises/logik-extended/./tests/reverse-slow-palindromes-1.logik)
+	Location(1,1,11,17)
+0a1,9
+>   Solution ==K ( L:Term |-> cons ( V0 , nil , .Vals ) )
+> #Or
+>   Solution ==K ( L:Term |-> cons ( V1 , cons ( V1 , nil , .Vals ) , .Vals ) )
+> #Or
+>   Solution ==K ( L:Term |-> cons ( V2 , cons ( V1 , cons ( V2 , nil , .Vals ) , .Vals ) , .Vals ) )
+> #Or
+>   Solution ==K ( L:Term |-> cons ( V3 , cons ( V2 , cons ( V2 , cons ( V3 , nil , .Vals ) , .Vals ) , .Vals ) , .Vals ) )
+> #Or
+>   Solution ==K ( L:Term |-> nil )
+/home/seth/git/k/k-distribution/tutorial/2_languages/4_logik/extended/exercises/logik-extended//../../../basic/Makefile:13: recipe for target 'tests/reverse-slow-palindromes-1.logik' failed
+make: [tests/reverse-slow-palindromes-1.logik] Error 1 (ignored)
+cat tests/reverse-fast-2.logik.in 2>/dev/null | /home/seth/git/k/k-distribution/bin/krun tests/reverse-fast-2.logik -d . --search --pattern "<solution> Solution:Map </solution>" --bound 1 | diff - tests/reverse-fast-2.logik.out
+[Error] Critical: Parser returned a non-zero exit code: 113
+Stdout:
+
+Stderr:
+[Error] Inner Parser: Unexpected sort Pgm for term parsed as production syntax
+Pgm ::= Clause Pgm. Expected: K
+	Source(/home/seth/git/k/k-distribution/tutorial/2_languages/4_logik/extended/exercises/logik-extended/./tests/reverse-fast-2.logik)
+	Location(1,1,11,44)
+0a1
+> Solution ==K ( L:Term |-> cons ( c , cons ( b , cons ( a , nil , .Vals ) , .Vals ) , .Vals ) )
+/home/seth/git/k/k-distribution/tutorial/2_languages/4_logik/extended/exercises/logik-extended//../../../basic/Makefile:17: recipe for target 'tests/reverse-fast-2.logik' failed
+make: [tests/reverse-fast-2.logik] Error 1 (ignored)
+cat tests/fact-2.logik.in 2>/dev/null | /home/seth/git/k/k-distribution/bin/krun tests/fact-2.logik --search --pattern "<solution> Solution:Map </solution>"  -d . | diff - tests/fact-2.logik.out
+[Error] Critical: Sort KResult is undefined.
+0a1
+> #False
+/home/seth/git/k/k-distribution/tutorial//../include/ktest.mak:77: recipe for target 'tests/fact-2.logik' failed
+make: [tests/fact-2.logik] Error 1 (ignored)
+cat tests/list-append-2.logik.in 2>/dev/null | /home/seth/git/k/k-distribution/bin/krun tests/list-append-2.logik --search --pattern "<solution> Solution:Map </solution>"  -d . | diff - tests/list-append-2.logik.out
+[Error] Critical: Parser returned a non-zero exit code: 113
+Stdout:
+
+Stderr:
+[Error] Inner Parser: Unexpected sort Pgm for term parsed as production syntax
+Pgm ::= Clause Pgm. Expected: K
+	Source(/home/seth/git/k/k-distribution/tutorial/2_languages/4_logik/extended/exercises/logik-extended/./tests/list-append-2.logik)
+	Location(1,1,5,32)
+0a1,5
+>   Solution ==K ( L1:Term |-> [ .Vals ] )
+>   ( L2:Term |-> [ b , .Vals | [ a , .Vals | [ .Vals ] ] ] )
+> #Or
+>   Solution ==K ( L1:Term |-> [ a , .Vals | [ b , .Vals | [ .Vals ] ] ] )
+>   L2:Term |-> [ .Vals ]
+/home/seth/git/k/k-distribution/tutorial//../include/ktest.mak:77: recipe for target 'tests/list-append-2.logik' failed
+make: [tests/list-append-2.logik] Error 1 (ignored)
+cat tests/takeout-2.logik.in 2>/dev/null | /home/seth/git/k/k-distribution/bin/krun tests/takeout-2.logik --search --pattern "<solution> Solution:Map </solution>"  -d . | diff - tests/takeout-2.logik.out
+[Error] Critical: Parser returned a non-zero exit code: 113
+Stdout:
+
+Stderr:
+[Error] Inner Parser: Unexpected sort Pgm for term parsed as production syntax
+Pgm ::= Clause Pgm. Expected: K
+	Source(/home/seth/git/k/k-distribution/tutorial/2_languages/4_logik/extended/exercises/logik-extended/./tests/takeout-2.logik)
+	Location(1,1,4,45)
+0a1,7
+>   Solution ==K ( L:Term |-> cons ( a , cons ( b , cons ( c , cons ( d , nil , .Vals ) , .Vals ) , .Vals ) , .Vals ) )
+> #Or
+>   Solution ==K ( L:Term |-> cons ( b , cons ( a , cons ( c , cons ( d , nil , .Vals ) , .Vals ) , .Vals ) , .Vals ) )
+> #Or
+>   Solution ==K ( L:Term |-> cons ( b , cons ( c , cons ( a , cons ( d , nil , .Vals ) , .Vals ) , .Vals ) , .Vals ) )
+> #Or
+>   Solution ==K ( L:Term |-> cons ( b , cons ( c , cons ( d , cons ( a , nil , .Vals ) , .Vals ) , .Vals ) , .Vals ) )
+/home/seth/git/k/k-distribution/tutorial//../include/ktest.mak:77: recipe for target 'tests/takeout-2.logik' failed
+make: [tests/takeout-2.logik] Error 1 (ignored)
+cat tests/factorial-tail-recursive.logik.in 2>/dev/null | /home/seth/git/k/k-distribution/bin/krun tests/factorial-tail-recursive.logik --search --pattern "<solution> Solution:Map </solution>"  -d . | diff - tests/factorial-tail-recursive.logik.out
+[Error] Critical: Parser returned a non-zero exit code: 113
+Stdout:
+
+Stderr:
+[Error] Inner Parser: Unexpected sort Pgm for term parsed as production syntax
+Pgm ::= Clause Pgm. Expected: K
+	Source(/home/seth/git/k/k-distribution/tutorial/2_languages/4_logik/extended/exercises/logik-extended/./tests/factorial-tail-recursive.logik)
+	Location(1,1,9,21)
+0a1
+> Solution ==K ( R:Term |-> 120 )
+/home/seth/git/k/k-distribution/tutorial//../include/ktest.mak:77: recipe for target 'tests/factorial-tail-recursive.logik' failed
+make: [tests/factorial-tail-recursive.logik] Error 1 (ignored)
+cat tests/list-takeout-3.logik.in 2>/dev/null | /home/seth/git/k/k-distribution/bin/krun tests/list-takeout-3.logik --search --pattern "<solution> Solution:Map </solution>"  -d . | diff - tests/list-takeout-3.logik.out
+[Error] Critical: Parser returned a non-zero exit code: 113
+Stdout:
+
+Stderr:
+[Error] Inner Parser: Unexpected sort Pgm for term parsed as production syntax
+Pgm ::= Clause Pgm. Expected: K
+	Source(/home/seth/git/k/k-distribution/tutorial/2_languages/4_logik/extended/exercises/logik-extended/./tests/list-takeout-3.logik)
+	Location(1,1,5,25)
+0a1,11
+>   Solution ==K ( L:Term |-> [ 1 , .Vals | [ 2 , .Vals | [ 3 , .Vals | [ V0 , .Vals | [ .Vals ] ] ] ] ] )
+>   ( X:Term |-> V0 )
+> #Or
+>   Solution ==K ( L:Term |-> [ 1 , .Vals | [ 2 , .Vals | [ V1 , .Vals | [ 3 , .Vals | [ .Vals ] ] ] ] ] )
+>   ( X:Term |-> V1 )
+> #Or
+>   Solution ==K ( L:Term |-> [ 1 , .Vals | [ V2 , .Vals | [ 2 , .Vals | [ 3 , .Vals | [ .Vals ] ] ] ] ] )
+>   ( X:Term |-> V2 )
+> #Or
+>   Solution ==K ( L:Term |-> [ V3 , .Vals | [ 1 , .Vals | [ 2 , .Vals | [ 3 , .Vals | [ .Vals ] ] ] ] ] )
+>   X:Term |-> V3
+/home/seth/git/k/k-distribution/tutorial//../include/ktest.mak:77: recipe for target 'tests/list-takeout-3.logik' failed
+make: [tests/list-takeout-3.logik] Error 1 (ignored)
+cat tests/reverse-fast-palindromes-1.logik.in 2>/dev/null | /home/seth/git/k/k-distribution/bin/krun tests/reverse-fast-palindromes-1.logik -d . --search --pattern "<solution> Solution:Map </solution>" --bound 5 | diff - tests/reverse-fast-palindromes-1.logik.out
+[Error] Critical: Parser returned a non-zero exit code: 113
+Stdout:
+
+Stderr:
+[Error] Inner Parser: Unexpected sort Pgm for term parsed as production syntax
+Pgm ::= Clause Pgm. Expected: K
+	Source(/home/seth/git/k/k-distribution/tutorial/2_languages/4_logik/extended/exercises/logik-extended/./tests/reverse-fast-palindromes-1.logik)
+	Location(1,1,10,17)
+0a1,9
+>   Solution ==K ( L:Term |-> cons ( V0 , nil , .Vals ) )
+> #Or
+>   Solution ==K ( L:Term |-> cons ( V1 , cons ( V1 , nil , .Vals ) , .Vals ) )
+> #Or
+>   Solution ==K ( L:Term |-> cons ( V2 , cons ( V1 , cons ( V2 , nil , .Vals ) , .Vals ) , .Vals ) )
+> #Or
+>   Solution ==K ( L:Term |-> cons ( V3 , cons ( V2 , cons ( V2 , cons ( V3 , nil , .Vals ) , .Vals ) , .Vals ) , .Vals ) )
+> #Or
+>   Solution ==K ( L:Term |-> nil )
+/home/seth/git/k/k-distribution/tutorial/2_languages/4_logik/extended/exercises/logik-extended//../../../basic/Makefile:19: recipe for target 'tests/reverse-fast-palindromes-1.logik' failed
+make: [tests/reverse-fast-palindromes-1.logik] Error 1 (ignored)
+cat tests/family-1.logik.in 2>/dev/null | /home/seth/git/k/k-distribution/bin/krun tests/family-1.logik --search --pattern "<solution> Solution:Map </solution>"  -d . | diff - tests/family-1.logik.out
+[Error] Critical: Parser returned a non-zero exit code: 113
+Stdout:
+
+Stderr:
+[Error] Inner Parser: Unexpected sort Pgm for term parsed as production syntax
+Pgm ::= Clause Pgm. Expected: K
+	Source(/home/seth/git/k/k-distribution/tutorial/2_languages/4_logik/extended/exercises/logik-extended/./tests/family-1.logik)
+	Location(1,1,17,33)
+0a1,39
+>   Solution ==K ( A:Term |-> jim )
+>   B:Term |-> john
+>   ( X:Term |-> david )
+> #Or
+>   Solution ==K ( A:Term |-> nathan )
+>   B:Term |-> david
+>   ( X:Term |-> jim )
+> #Or
+>   Solution ==K ( A:Term |-> nathan )
+>   B:Term |-> david
+>   ( X:Term |-> steve )
+> #Or
+>   Solution ==K ( A:Term |-> nathan )
+>   B:Term |-> jim
+>   ( X:Term |-> steve )
+> #Or
+>   Solution ==K ( A:Term |-> nathan )
+>   B:Term |-> john
+>   ( X:Term |-> david )
+> #Or
+>   Solution ==K ( A:Term |-> nathan )
+>   B:Term |-> john
+>   ( X:Term |-> jim )
+> #Or
+>   Solution ==K ( A:Term |-> nathan )
+>   B:Term |-> john
+>   ( X:Term |-> steve )
+> #Or
+>   Solution ==K ( A:Term |-> steve )
+>   B:Term |-> david
+>   ( X:Term |-> jim )
+> #Or
+>   Solution ==K ( A:Term |-> steve )
+>   B:Term |-> john
+>   ( X:Term |-> david )
+> #Or
+>   Solution ==K ( A:Term |-> steve )
+>   B:Term |-> john
+>   X:Term |-> jim
+/home/seth/git/k/k-distribution/tutorial//../include/ktest.mak:77: recipe for target 'tests/family-1.logik' failed
+make: [tests/family-1.logik] Error 1 (ignored)
+cat tests/reverse-slow-palindromes-2.logik.in 2>/dev/null | /home/seth/git/k/k-distribution/bin/krun tests/reverse-slow-palindromes-2.logik --search --pattern "<solution> Solution:Map </solution>"  -d . | diff - tests/reverse-slow-palindromes-2.logik.out
+[Error] Critical: Parser returned a non-zero exit code: 113
+Stdout:
+
+Stderr:
+[Error] Inner Parser: Unexpected sort Pgm for term parsed as production syntax
+Pgm ::= Clause Pgm. Expected: K
+	Source(/home/seth/git/k/k-distribution/tutorial/2_languages/4_logik/extended/exercises/logik-extended/./tests/reverse-slow-palindromes-2.logik)
+	Location(1,1,10,70)
+0a1,3
+> Solution ==K ( A:Term |-> V0 )
+> B:Term |-> V1
+> C:Term |-> V0
+/home/seth/git/k/k-distribution/tutorial//../include/ktest.mak:77: recipe for target 'tests/reverse-slow-palindromes-2.logik' failed
+make: [tests/reverse-slow-palindromes-2.logik] Error 1 (ignored)
+cat tests/fact-5.logik.in 2>/dev/null | /home/seth/git/k/k-distribution/bin/krun tests/fact-5.logik --search --pattern "<solution> Solution:Map </solution>"  -d . | diff - tests/fact-5.logik.out
+[Error] Critical: Parser returned a non-zero exit code: 113
+Stdout:
+
+Stderr:
+[Error] Inner Parser: Unexpected sort Pgm for term parsed as production syntax
+Pgm ::= Clause Pgm. Expected: K
+	Source(/home/seth/git/k/k-distribution/tutorial/2_languages/4_logik/extended/exercises/logik-extended/./tests/fact-5.logik)
+	Location(1,1,3,9)
+0a1
+> Solution ==K ( X:Term |-> john )
+/home/seth/git/k/k-distribution/tutorial//../include/ktest.mak:77: recipe for target 'tests/fact-5.logik' failed
+make: [tests/fact-5.logik] Error 1 (ignored)
+cat tests/reverse-fast-3.logik.in 2>/dev/null | /home/seth/git/k/k-distribution/bin/krun tests/reverse-fast-3.logik --search --pattern "<solution> Solution:Map </solution>"  -d . | diff - tests/reverse-fast-3.logik.out
+[Error] Critical: Parser returned a non-zero exit code: 113
+Stdout:
+
+Stderr:
+[Error] Inner Parser: Unexpected sort Pgm for term parsed as production syntax
+Pgm ::= Clause Pgm. Expected: K
+	Source(/home/seth/git/k/k-distribution/tutorial/2_languages/4_logik/extended/exercises/logik-extended/./tests/reverse-fast-3.logik)
+	Location(1,1,8,58)
+0a1,3
+> Solution ==K ( L:Term |-> cons ( c , cons ( V0 , cons ( a , nil , .Vals ) , .Vals ) , .Vals ) )
+> T:Term |-> cons ( a , cons ( V0 , cons ( c , nil , .Vals ) , .Vals ) , .Vals )
+> X:Term |-> V0
+/home/seth/git/k/k-distribution/tutorial//../include/ktest.mak:77: recipe for target 'tests/reverse-fast-3.logik' failed
+make: [tests/reverse-fast-3.logik] Error 1 (ignored)
+cat tests/list-perm.logik.in 2>/dev/null | /home/seth/git/k/k-distribution/bin/krun tests/list-perm.logik --search --pattern "<solution> Solution:Map </solution>"  -d . | diff - tests/list-perm.logik.out
+[Error] Critical: Parser returned a non-zero exit code: 113
+Stdout:
+
+Stderr:
+[Error] Inner Parser: Unexpected sort Pgm for term parsed as production syntax
+Pgm ::= Clause Pgm. Expected: K
+	Source(/home/seth/git/k/k-distribution/tutorial/2_languages/4_logik/extended/exercises/logik-extended/./tests/list-perm.logik)
+	Location(1,1,7,20)
+0a1,11
+>   Solution ==K ( P:Term |-> [ 1 , .Vals | [ 2 , .Vals | [ 3 , .Vals | [ .Vals ] ] ] ] )
+> #Or
+>   Solution ==K ( P:Term |-> [ 1 , .Vals | [ 3 , .Vals | [ 2 , .Vals | [ .Vals ] ] ] ] )
+> #Or
+>   Solution ==K ( P:Term |-> [ 2 , .Vals | [ 1 , .Vals | [ 3 , .Vals | [ .Vals ] ] ] ] )
+> #Or
+>   Solution ==K ( P:Term |-> [ 2 , .Vals | [ 3 , .Vals | [ 1 , .Vals | [ .Vals ] ] ] ] )
+> #Or
+>   Solution ==K ( P:Term |-> [ 3 , .Vals | [ 1 , .Vals | [ 2 , .Vals | [ .Vals ] ] ] ] )
+> #Or
+>   Solution ==K ( P:Term |-> [ 3 , .Vals | [ 2 , .Vals | [ 1 , .Vals | [ .Vals ] ] ] ] )
+/home/seth/git/k/k-distribution/tutorial//../include/ktest.mak:77: recipe for target 'tests/list-perm.logik' failed
+make: [tests/list-perm.logik] Error 1 (ignored)
+cat tests/list-takeout-1.logik.in 2>/dev/null | /home/seth/git/k/k-distribution/bin/krun tests/list-takeout-1.logik --search --pattern "<solution> Solution:Map </solution>"  -d . | diff - tests/list-takeout-1.logik.out
+[Error] Critical: Parser returned a non-zero exit code: 113
+Stdout:
+
+Stderr:
+[Error] Inner Parser: Unexpected sort Pgm for term parsed as production syntax
+Pgm ::= Clause Pgm. Expected: K
+	Source(/home/seth/git/k/k-distribution/tutorial/2_languages/4_logik/extended/exercises/logik-extended/./tests/list-takeout-1.logik)
+	Location(1,1,4,25)
+0a1
+> Solution ==K ( L:Term |-> [ 1 , .Vals | [ 3 , .Vals | [ .Vals ] ] ] )
+/home/seth/git/k/k-distribution/tutorial//../include/ktest.mak:77: recipe for target 'tests/list-takeout-1.logik' failed
+make: [tests/list-takeout-1.logik] Error 1 (ignored)
+cat tests/append-3.logik.in 2>/dev/null | /home/seth/git/k/k-distribution/bin/krun tests/append-3.logik --search --pattern "<solution> Solution:Map </solution>"  -d . | diff - tests/append-3.logik.out
+[Error] Critical: Parser returned a non-zero exit code: 113
+Stdout:
+
+Stderr:
+[Error] Inner Parser: Unexpected sort Pgm for term parsed as production syntax
+Pgm ::= Clause Pgm. Expected: K
+	Source(/home/seth/git/k/k-distribution/tutorial/2_languages/4_logik/extended/exercises/logik-extended/./tests/append-3.logik)
+	Location(1,1,5,30)
+0a1,2
+> Solution ==K ( Y:Term |-> V0 )
+> Z:Term |-> cons ( a , V0 , .Vals )
+/home/seth/git/k/k-distribution/tutorial//../include/ktest.mak:77: recipe for target 'tests/append-3.logik' failed
+make: [tests/append-3.logik] Error 1 (ignored)
